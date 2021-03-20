@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="utf-8">
+    <TITLE>商品比較サイト</TITLE>
+    <link rel="stylesheet" href="stylesheet.css">
+    <!--
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="Keywords" content="">
+    <meta name="Description" content="">
+    -->
+</head>
+
+<body>
+    <div id="container">
+        <div class="header">いろいろな商品を比較！</div>
+        <p><a href="price_comparison_cart.php">カートを見る</a></p>
+        <!--<form method='post' action=''>-->
+        <form action method="get">
+            <input type='text' id='searchtextbox' placeholder='キーワードで探す' name="search-key">
+            <input id="searchbtn" type="submit" value="Go">
+            <div class="select">
+                <div id="shop-select"></div>
+                <select id="order-select" name="order-select"></select>
+            </div>
+            <!--<input type="hidden" name="kind" value="change_items">-->
+        </form>
+        <!--</form>-->
+        <div id="loading"><img src="img/loading.gif"></div>
+        <div id="item-list" class="flexbox"></div>
+        <!--
+        <table border="0">
+            <tbody id="item-list"></tbody>
+        </table>
+        -->
+    </div>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="price_comparison.js"></script>
+</body>
+</html>
