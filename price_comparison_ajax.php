@@ -16,7 +16,8 @@ echo json_encode($items); //jsonオブジェクト化。必須。配列でない
 //echo json_encode($shop_disp); //jsonオブジェクト化。必須。配列でない場合は、敢えてjson化する必要はない
 
 function get_items($shop_disp,$keyword){
-    require_once("./../data/shop_data.php"); // shop_data連想配列の読み込み
+    $json = file_get_contents("./../data/shop_data.json"); // jsonファイルの読み込み（非ハードコード化）
+    $shop_data = json_decode($json,true); // 連想配列にする。
     //var_dump($shop_data);
     $rakuten_items = array();
     $amazon_items = array();
