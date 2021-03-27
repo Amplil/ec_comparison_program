@@ -35,6 +35,20 @@
         </table>
         -->
     </div>
+    <!-- カートの中身と合計 -->
+    <div id="cart_detail">
+        <div id="close_cart">
+        <span class="glyphicon glyphicon-remove" title="閉じる"></span>
+        </div>
+        <div id="goods_list"></div>
+        <div id="go_cart">
+        <a href="#" class="btn btn-warning btn-sm">お客様情報の入力へ <span class="glyphicon glyphicon-chevron-right"></span></a>
+        </div>
+    </div>
+    
+    <form id="form" name="form" method="post" action="cart.php" target="blank">
+        <input type="hidden" id="data" name="data" value="" />
+    </form>
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="price_comparison.js"></script>
 </body>
