@@ -18,6 +18,8 @@ echo json_encode($items); //jsonオブジェクト化。必須。配列でない
 function get_items($shop_disp,$keyword){
     $json = file_get_contents("./../data/shop_data.json"); // jsonファイルの読み込み（非ハードコード化）
     $shop_data = json_decode($json,true); // 連想配列にする。
+    //require_once("./../data/shop_data.php"); // shop_data連想配列の読み込み
+
     //var_dump($shop_data);
     $rakuten_items = array();
     $amazon_items = array();

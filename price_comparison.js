@@ -63,9 +63,11 @@ $(function(){
 
 function search(){
     if(keyword!='' && keyword!=null){
+      /*
         console.log(keyword);
         console.log(shop_disp);
         console.log(order);
+        */
 
         var item_list=document.getElementById('item-list');
         let searchtextbox=document.getElementById('searchtextbox');
@@ -104,33 +106,36 @@ function search(){
             item_list.insertAdjacentHTML('beforeend','<tr>');
             */
             var disp_str='';
+            var id=0;
             for(var item of data){
-                    //console.log(item)
+              //console.log(item)
 
-                    disp_str=disp_str.concat('<div class="item"><a href="'
-                    +item['url']+'" target="_blank"><div class="img-block"><img src="'
-                    +item['image']+'"></div><div>'
-                    +item['title']+'</div><div>'
-                    +"￥"+item['price']+'</div></a>');
+              disp_str=disp_str.concat('<div class="item"><a href="'
+              +item['url']+'" target="_blank"><div class="img-block"><img src="'
+              +item['image']+'"></div><div>'
+              +item['title']+'</div><div>'
+              +"￥"+item['price']+'</div></a>');
 
-                    /*
-                    item_list.insertAdjacentHTML('beforeend',
-                    '<div class="item"><a href="'
-                    +item['url']+'" target="_blank"><div class="img-block"><img src="'
-                    +item['image']+'"></div><div>'
-                    +item['title']+'</div><div>'
-                    +"￥"+item['price']+'</div></a></div>');
-                    */
+              /*
+              item_list.insertAdjacentHTML('beforeend',
+              '<div class="item"><a href="'
+              +item['url']+'" target="_blank"><div class="img-block"><img src="'
+              +item['image']+'"></div><div>'
+              +item['title']+'</div><div>'
+              +"￥"+item['price']+'</div></a></div>');
+              */
 
-                   disp_str=disp_str.concat('<select name="num">');
-                   for (var i = 1; i < 10; i++){
-                        disp_str=disp_str.concat('<option value="'+i+'">'+i+'</option>');
-                    } // 個数選択
-                    disp_str=disp_str.concat('</select><input type="button" value="カートに入れる"><span class="glyphicon glyphicon-shopping-cart"></span> </button></div>');
+              disp_str=disp_str.concat('<select id="'+id+'">');
+              for (var i = 1; i < 10; i++){
+                  disp_str=disp_str.concat('<option value="'+i+'">'+i+'</option>');
+              } // 個数選択
+              disp_str=disp_str.concat('</select><input type="button" class="add_goods" value="カートに入れる"><span class="glyphicon glyphicon-shopping-cart"></span> </button></div>');
+              id++;
             }
             //console.log(disp_str)
             item_list.insertAdjacentHTML('beforeend',disp_str);
-
+            //console.log(data[1])
+            //console.log(data[1].image)
             
         }).fail(function(XMLHttpRequest, textStatus, errorThrown){
             alert(errorThrown);
@@ -141,15 +146,11 @@ function search(){
 
 // 商品をカートに入れる
 $(function() {
-    var goods = new Object();
-    
-      /*
-       * ボタンクリックで処理を開始
-       */
-         $(document).on('click',".add_goods",function(){
-           var data      = $(this).data();          //ボタンに定義されているデータ
-           var quantity  = $(data.id).val();        //選択した数量
-           var sub_total = data.kakaku * quantity;  //単価 * 数量
+  var goods = new Object();
+  $(document).on('click',".add_goods",function(){
+    var data      = $(this).data();          //ボタンに定義されているデータ
+    var quantity  = $(data.id).val();        //選択した数量
+    var sub_total = data.kakaku * quantity;  //単価 * 数量
            
          //オブジェクトを定義
            goods[data.number] = new Object();  //同じ商品を初期化
