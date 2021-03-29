@@ -14,11 +14,13 @@ $order_item=filter_input(INPUT_POST,"order-item",FILTER_DEFAULT,FILTER_REQUIRE_A
 //$items=get_items($shop_disp,$keyword);
 //$items=sort_items($items,$order,$order_item);
 
-$gi=New GetItems();
-echo json_encode($gi->items); //jsonオブジェクト化。必須。配列でない場合は、敢えてjson化する必要はない
+$is=New ItemSearch();
+//echo $is->i;
+echo json_encode($is->items); //jsonオブジェクト化。必須。配列でない場合は、敢えてjson化する必要はない
 //echo json_encode($shop_disp); //jsonオブジェクト化。必須。配列でない場合は、敢えてjson化する必要はない
 
-class GetItems{
+class ItemSearch{
+    //public $i=0;
     private $shop_data = []; // 連想配列にする。
     public $shop_disp=[];
     public $keyword="";
@@ -32,69 +34,91 @@ class GetItems{
         $this->keyword=filter_input(INPUT_POST,"keyword");
         $this->sort=filter_input(INPUT_POST,"order");
         //public $sort_item=filter_input(INPUT_POST,"order-item",FILTER_DEFAULT,FILTER_REQUIRE_ARRAY);
-        
+        $this->get();
+    }
+    function get(){
+        //$this->i++;
         if (in_array('rakuten',$this->shop_disp)) $this->rakuten();
         if (in_array('amazon',$this->shop_disp)) $this->amazon();
         if (in_array('ebay',$this->shop_disp)) $this->ebay();
         $this->sort_items();
+        return $this->items;
     }
     function rakuten(){
-        $sort_str=['review-rank'=>'sr_st_relevanceblender',
+        $sort_str=['review-rank'=>'-reviewCount',
                 'price-asc-rank'=>'+itemPrice',
                 'price-desc-rank'=>'-itemPrice']; // 各ショップでのsortの名称
         $page = 1; // 取得ページ
         $hits_set = 10; // 1ページあたりの取得件数（商品数）
-        // エンコーディング
-        $url_word = htmlspecialchars(urlencode($this->keyword));
-        $url_sort = htmlspecialchars(urlencode($sort_str[$this->sort]));
+        //$url_word = htmlspecialchars(urlencode($this->keyword));
+        //$url_sort = htmlspecialchars(urlencode($sort_str[$this->sort]));
         $applicationId = $this->shop_data["applicationId"]; // アプリID
         $affiliateId = $this->shop_data["affiliateId"]; // アフィリエイトID
         // 楽天リクエストURLから楽天市場の商品情報を取得
-        $rakutenUrl = "https://app.rakuten.co.jp/services/api/IchibaItem/Search/20130805?format=xml&keyword=" . $url_word . "&sort=" . $url_sort . "&page=" . $page . "&hits=" . $hits_set . "&applicationId=" . $applicationId . "&affiliateId=" . $affiliateId;
-        $contents = @file_get_contents($rakutenUrl); // レスポンス取得
+        $url = "https://app.rakuten.co.jp/services/api/IchibaItem/Search/20130805?format=xml&keyword=" 
+            . htmlspecialchars(urlencode($this->keyword))
+            . "&sort=" . htmlspecialchars(urlencode($sort_str[$this->sort]))
+            . "&page=" . $page 
+            . "&hits=" . $hits_set 
+            . "&applicationId=" . $applicationId 
+            . "&affiliateId=" . $affiliateId;
+        $contents = @file_get_contents($url); // レスポンス取得
         $xml = simplexml_load_string($contents); // XMLオブジェクトに変換
         foreach ($xml->Items->Item as $item) {
             $affiliateUrl = (string)$item->affiliateUrl;
             $mediumImageUrl = (string)$item->mediumImageUrls->imageUrl;
-            $detail = $item->itemCaption;
-            $detail = mb_substr($detail, 0, 30, "UTF-8") . '・・・';
+            $title = (string)$item->itemName;
+            //$detail = (string)$item->itemCaption;
+            //$detail = mb_substr($detail, 0, 30, "UTF-8") . '・・・';
             $price = (string)$item->itemPrice;
-            $this->items[] = ['image' => $mediumImageUrl, 'url' => $affiliateUrl, 'title' => $detail, 'price' => $price];
+            $this->items[] = ['image' => $mediumImageUrl, 'url' => $affiliateUrl, 'title' => $title, 'price' => $price];
         }
     }
     function amazon(){
         $sort_str=['review-rank'=>'relevanceblender',
                 'price-asc-rank'=>'price-asc-rank',
                 'price-desc-rank'=>'price-desc-rank']; // 各ショップでのsortの名称
+        $hits_set = 10; // 取得件数（商品数）
+        $url="https://www.amazon.co.jp/s?k=" 
+            . htmlspecialchars(urlencode($this->keyword))
+            ."&s=".htmlspecialchars(urlencode($sort_str[$this->sort]));
         $ch = curl_init(); // cURLセッションを初期化
-        curl_setopt($ch, CURLOPT_URL, "https://www.amazon.co.jp/s?k=" . urlencode($this->keyword)."&s=".$sort_str[$this->sort]); // 取得するURLを指定
+        curl_setopt($ch, CURLOPT_URL, $url); // 取得するURLを指定
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // 実行結果を文字列で返す
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // サーバー証明書の検証を行わない
         $html = curl_exec($ch); // URLの情報を取得
         curl_close($ch); // セッションを終了
 
+        $all_items=[]; // スクレイピングにつきitem数を指定できないため一旦ページにある商品すべてを読み込む
         $dom = new DOMDocument;
         @$dom->loadHTML($html); // エラーを出さずにDOMDocumentに読み込む
-        $xpath = new DOMXPath($dom); // DOMDocumentからXPath式を実行するためのDOMXPathを生成        
+        $xpath = new DOMXPath($dom); // DOMDocumentからXPath式を実行するためのDOMXPathを生成
         foreach ($xpath->query('//span[3]/div[2]/div') as $node) {
             $image = $xpath->evaluate('string(.//img[contains(@class, "s-image")]/@src)', $node);
             $url = 'https://www.amazon.co.jp/' . $xpath->evaluate('string(.//a[contains(@class, "a-link-normal")]/@href)', $node);
             $title = $xpath->evaluate('string(.//div/div/div[2]/h2/a/span)', $node);
             $price = str_replace(array('￥', ','), array('', ''),$xpath->evaluate('string(.//span[contains(@class, "a-price-whole")])', $node));
             if ($price == "") continue;
-            $this->items[] = ['image' => $image, 'url' => $url, 'title' => $title, 'price' => $price];
+            $all_items[] = ['image' => $image, 'url' => $url, 'title' => $title, 'price' => $price];
         }
+        $this->items=array_merge($this->items,array_slice($all_items,0,$hits_set)); // 0番目から$hits_set個取得して$this->itemsと結合
     }
     function ebay(){
         $sort_str=['review-rank'=>'BestMatch',
                 'price-asc-rank'=>'PricePlusShippingLowest',
                 'price-desc-rank'=>'PricePlusShippingHighest']; // 各ショップでのsortの名称
         //$sort = 'PricePlusShippingLowest';
-        $hits_set = 10;
+        $hits_set = 10; // 取得件数（商品数）
         $appname=$this->shop_data["appname"]; // SECURITY-APPNAME
         // ebayリクエストURLからebay市場の商品情報を取得
-        $ebayUrl = "https://svcs.ebay.com/services/search/FindingService/v1?SECURITY-APPNAME=".$appname."&OPERATION-NAME=findItemsByKeywords&SERVICE-VERSION=1.0.0&RESPONSE-DATA-FORMAT=JSON&REST-PAYLOAD&keywords=".$this->keyword."&paginationInput.entriesPerPage=".$hits_set."&sortOrder=".$sort_str[$this->sort]."&GLOBAL-ID=EBAY-US&siteid=0";
-        $contents = @file_get_contents($ebayUrl); // レスポンス取得
+        $url = "https://svcs.ebay.com/services/search/FindingService/v1?SECURITY-APPNAME="
+            .$appname
+            ."&OPERATION-NAME=findItemsByKeywords&SERVICE-VERSION=1.0.0&RESPONSE-DATA-FORMAT=JSON&REST-PAYLOAD&keywords="
+            .htmlspecialchars(urlencode($this->keyword))
+            ."&paginationInput.entriesPerPage=".$hits_set
+            ."&sortOrder=".htmlspecialchars(urlencode($sort_str[$this->sort]))
+            ."&GLOBAL-ID=EBAY-US&siteid=0";
+        $contents = @file_get_contents($url); // レスポンス取得
         $json = json_decode($contents); // jsonオブジェクトに変換
         //var_dump($json);
         if ($json!==NULL) {
