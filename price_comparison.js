@@ -1,8 +1,9 @@
 let shop_item ={rakuten:'楽天',amazon:'Amazon',ebay:'ebay'}; // 表示の順番
-let order_item = ['人気順', '価格の安い順', '価格の高い順']; // 表示の順番
-let order = '価格の安い順';
+//let order_item = ['人気順', '価格の安い順', '価格の高い順']; // 表示の順番
+let order_str = {'review-rank':'人気順', 'price-asc-rank':'価格の安い順', 'price-desc-rank':'価格の高い順'}; // 表示の順番
+let order = 'price-asc-rank';
 //let shop_disp={rakuten:true,amazon:false,ebay:true};
-let shop_disp=["rakuten","ebay"];
+let shop_disp=['rakuten','ebay'];
 let item_data=[];
 var shop_select=document.getElementById('shop-select');
 var order_select=document.getElementById('order-select');
@@ -19,11 +20,11 @@ v_order=v.get('order-select');
 if(v_shop_disp!=null)shop_disp=v_shop_disp;
 if(v_order!=null)order=v_order;
 
-for(var key in shop_item){
+for(let key in shop_item){
     shop_select.insertAdjacentHTML('beforeend','<label><input type="checkbox" name="shop-disp[]" value="'+key+'"'+(shop_disp.includes(key) ? ' checked' : '')+'>'+shop_item[key]+'　</label>');
 }
-for(var item of order_item){
-    order_select.insertAdjacentHTML('beforeend','<option value='+item +(item === order ? ' selected' : '')+'>'+item+'</option>');
+for(let key in order_str){
+    order_select.insertAdjacentHTML('beforeend','<option value='+key +(key === order ? ' selected' : '')+'>'+order_str[key]+'</option>');
 }
 search();
 
@@ -89,7 +90,6 @@ function search(){
                 "shop-disp": shop_disp,
                 "keyword":keyword,
                 "order":order,
-                "order-item":order_item
             },
             dataType: 'json' //必須。json形式で返すように設定
         }).done(function(data){
@@ -109,7 +109,7 @@ function search(){
             var disp_str='';
             var id=0;
             item_data=data;
-            for(var item of item_data){
+            for(let item of item_data){
               //console.log(item)
 
               disp_str=disp_str.concat('<div class="item"><a href="'
@@ -128,7 +128,7 @@ function search(){
               */
 
               disp_str=disp_str.concat('<select id=goods'+id+'>');
-              for (var i = 1; i < 10; i++){
+              for (let i = 1; i < 10; i++){
                   disp_str=disp_str.concat('<option value="'+i+'">'+i+'</option>');
               } // 個数選択
               disp_str=disp_str.concat('</select><button type="button" class="add_goods" value="'+id+'">カートに入れる</button></div>');

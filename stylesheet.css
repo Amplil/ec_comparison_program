@@ -62,3 +62,19 @@
 	top:20%;
 	margin-left:-30px;
 }
+#cart_detail{
+  display: none;
+  padding: 10px;
+  text-align: right;
+  border-bottom: #ddd solid 2px;
+  width: 100%;
+  position: absolute;
+  bottom: 0px;
+  background-color: #666666;
+  color: #FFF;
+}
+#cart_detail ul li{
+  padding: 5px;
+  list-style: none;
+  border-bottom: #ddd dashed 1px;
+}
