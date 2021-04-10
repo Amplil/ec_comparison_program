@@ -4,7 +4,7 @@ let order_str = {'review-rank':'人気順', 'price-asc-rank':'価格の安い順
 let order = 'price-asc-rank';
 //let shop_disp={rakuten:true,amazon:false,ebay:true};
 let shop_disp=['rakuten','ebay'];
-let item_data=[];
+var item_data=[];
 var shop_select=document.getElementById('shop-select');
 var order_select=document.getElementById('order-select');
 /*
@@ -163,8 +163,33 @@ $(function() {
 
     console.log("#goods"+id);
     console.log(quantity);
-    console.log(sub_total)
+    console.log(sub_total);
+
+
+    $.post({
+      url: 'add_cart.php',
+      data:{
+          "product_url": data.url,
+          "product_name":data.title,
+          "num":quantity,
+      },
+      dataType: 'json' //必須。json形式で返すように設定
+    }).done(function(data){
+      let cart=data;
+      //console.log(cart);
+      for(let key in cart){
+        let cart_id=item_data.findIndex((u)=>u.title===key);
+        console.log(key);
+        console.log(cart_id);
+        if(cart_id!=-1){
+          $('.add_goods[value='+cart_id+']').text('追加済み');
+        }
+      }
+    }).fail(function(XMLHttpRequest, textStatus, errorThrown){
+        alert(errorThrown);
+    })  
     
+
     cart_open();
   });
          
