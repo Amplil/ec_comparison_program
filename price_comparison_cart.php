@@ -1,5 +1,20 @@
 <!DOCTYPE html>
 <html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bootstrap4 copy and tooltip sample</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.1/css/all.css">
+    <style>
+        .copy-btn:hover{
+            color: #007bff;
+        }
+        .table{
+            width: 250px;
+        }
+    </style>
+</head>
 
 <body>
     <h1>ショッピングカート</h1>
@@ -74,9 +89,46 @@
     //echo $copytext;
     ?>
 
-    <button onclick="copyToClipboard()">Copy text</button>
+    <button id="copy-button">Copy text</button>
 
+    <script src="//code.jquery.com/jquery-3.1.1.min.js"></script>
+    <!-- <script src="price_comparison.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
     <script>
+        $('#copy-button')
+        // tooltip設定
+        .tooltip({
+            trigger: 'manual'
+        })
+        // tooltip表示後の動作を設定
+        .on('shown.bs.tooltip', function(){
+            setTimeout((function(){
+            $(this).tooltip('hide');
+            }).bind(this), 1500);
+        })
+        // クリック時の動作を設定
+        .on('click', function(){
+            //$('#items').select();
+
+            let copyTarget = document.getElementById("items");
+            //document.write(copyTarget.value);
+            let range = document.createRange();
+            range.selectNode(copyTarget);
+            window.getSelection().addRange(range);
+
+            const copyResult = document.execCommand('copy');
+            console.log(copyResult)
+            // コピー結果によって表示変更
+            if(copyResult){
+                $('#copy-button').attr('data-original-title', 'コピーしました');
+            }else{
+                $('#copy-button').attr('data-original-title', 'コピー失敗しました');
+            }
+            // tooltip表示
+            $(this).tooltip('show');
+        });
+
+        /*
         function copyToClipboard() {
             var copyTarget = document.getElementById("items");
             //document.write(copyTarget.value);
@@ -90,10 +142,10 @@
 
             alert("コピーできました！");
         }
+        */
+
     </script>
     
 </body>
-<script src="//code.jquery.com/jquery-3.1.1.min.js"></script>
-<script src="price_comparison.js"></script>
 </html>
 
