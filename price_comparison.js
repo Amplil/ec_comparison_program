@@ -27,6 +27,7 @@ for(let key in order_str){
     order_select.insertAdjacentHTML('beforeend','<option value='+key +(key === order ? ' selected' : '')+'>'+order_str[key]+'</option>');
 }
 search();
+//cart_update(); // searchよりも前に実行されてしまう模様 searchのdoneに入れる
 
 $(function(){
     $('#shop-select').on("click",function(){
@@ -109,6 +110,7 @@ function search(){
             var disp_str='';
             var id=0;
             item_data=data;
+            //console.log(item_data);
             for(let item of item_data){
               //console.log(item)
 
@@ -139,11 +141,39 @@ function search(){
             //console.log(data[1])
             //console.log(data[1].image)
             
+            cart_update(); // searchが終わってから実行するようにする
         }).fail(function(XMLHttpRequest, textStatus, errorThrown){
             alert(errorThrown);
         })
 		$("#loading").fadeOut();
     }
+}
+function cart_update(product_data={}){
+  // 引数が何もないときphpのsessionのカート情報を呼び出すだけの機能になる
+  $.post({
+    url: 'add_cart.php',
+    data:product_data,
+    dataType: 'json' //必須。json形式で返すように設定
+  }).done(function(data){
+    let cart=data;
+    console.log(cart);
+    console.log(item_data);
+    
+    for(let key in cart){
+      let cart_id=item_data.findIndex((u)=>u.title===key);
+      console.log(key);
+      console.log(cart_id);
+      console.log(cart[key].num);
+      if(cart_id!=-1){
+        $('.add_goods[value='+cart_id+']').text('追加済み');
+        $("#goods"+cart_id).val(cart[key].num);
+        //console.log($("#goods"+cart_id));
+      }
+    }
+    
+  }).fail(function(XMLHttpRequest, textStatus, errorThrown){
+      alert(errorThrown);
+  })  
 }
 
 // 商品をカートに入れる
@@ -164,32 +194,13 @@ $(function() {
     console.log("#goods"+id);
     console.log(quantity);
     console.log(sub_total);
+    product_data={
+      "product_url": data.url,
+      "product_name":data.title,
+      "num":quantity,
+    };
 
-
-    $.post({
-      url: 'add_cart.php',
-      data:{
-          "product_url": data.url,
-          "product_name":data.title,
-          "num":quantity,
-      },
-      dataType: 'json' //必須。json形式で返すように設定
-    }).done(function(data){
-      let cart=data;
-      //console.log(cart);
-      for(let key in cart){
-        let cart_id=item_data.findIndex((u)=>u.title===key);
-        console.log(key);
-        console.log(cart_id);
-        if(cart_id!=-1){
-          $('.add_goods[value='+cart_id+']').text('追加済み');
-        }
-      }
-    }).fail(function(XMLHttpRequest, textStatus, errorThrown){
-        alert(errorThrown);
-    })  
-    
-
+    cart_update(product_data);
     cart_open();
   });
          

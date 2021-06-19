@@ -18,12 +18,12 @@
 
 <body>
     <h1>ショッピングカート</h1>
-    <p><a href="price_comparison.html">商品一覧へ</a></p>
+    <!-- <p><a href="price_comparison.html">商品一覧へ</a></p> -->
     <p><a href="price_comparison_delete.php">カートをすべて空に</a></p>
 
     <?php
     session_start();
-
+    //echo phpinfo();
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $product_name = $_POST['product_name'];
