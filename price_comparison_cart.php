@@ -26,13 +26,13 @@
     //echo phpinfo();
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $product_name = $_POST['product_name'];
+        $product_id = $_POST['product_id'];
         $kind = $_POST['kind'];
         if ($kind === 'change_amount') {
             $num = $_POST['num'];
-            $_SESSION['cart'][$product_name]['num'] = $num;
+            $_SESSION['cart'][$product_id]['num'] = $num;
         } elseif ($kind === 'delete') {
-            unset($_SESSION['cart'][$product_name]);
+            unset($_SESSION['cart'][$product_id]);
         }
     }
 
@@ -54,7 +54,7 @@
     foreach ($cart as $key => $var) {        
         print '
         <tr>
-        <td>'.$key.'</td>
+        <td>'.$var['title'].'</td>
         <td>' . $var['num'] . '個</td>
         <form action="" method="POST">
             <td>
@@ -66,14 +66,14 @@
             </td>
             <td>
                 <input type="hidden" name="kind" value="change_amount">
-                <input type="hidden" name="product_name" value="' . $key . '">
+                <input type="hidden" name="product_id" value="' . $key . '">
                 <input type="submit" value="変更">
             </td>
         </form>
         <form action="" method="POST">
             <td>
                 <input type="hidden" name="kind" value="delete">
-                <input type="hidden" name="product_name" value="'.$key.'">
+                <input type="hidden" name="product_id" value="'.$key.'">
                 <input type="submit" value="削除">
             </td>
         </form>

@@ -4,14 +4,14 @@ let order_str = {'review-rank':'人気順', 'price-asc-rank':'価格の安い順
 let order = 'price-asc-rank';
 //let shop_disp={rakuten:true,amazon:false,ebay:true};
 let shop_disp=['rakuten','ebay'];
-var item_data=[];
-var shop_select=document.getElementById('shop-select');
-var order_select=document.getElementById('order-select');
+let item_data=[];
+let shop_select=document.getElementById('shop-select');
+let order_select=document.getElementById('order-select');
 /*
-var label=document.createElement('label');
-var input=document.createElement('input');
-var name=document.createElement('input');
-var text=document.createTextNode(message);
+let label=document.createElement('label');
+let input=document.createElement('input');
+let name=document.createElement('input');
+let text=document.createTextNode(message);
 */
 let v = new URLSearchParams(window.location.search);
 keyword=v.get('search-key');
@@ -32,15 +32,15 @@ search();
 $(function(){
     $('#shop-select').on("click",function(){
         /*
-        var vals=[];
+        let vals=[];
         //vals=$('#shop-select input').map(function(){
         vals=$(this).children('label').map(function(){
                 return $(this).children('input').prop('checked');
         })
         console.log(vals);
         //console.log(vals[2]);
-        var i=0;
-        for(var item in shop_disp){
+        let i=0;
+        for(let item in shop_disp){
             shop_disp[item]=vals[i];
             //console.log(item,vals[i]);
             i++;
@@ -54,7 +54,7 @@ $(function(){
 
 $(function(){
     $('#order-select').on("change",function(){
-        //var vals=$(this).val();
+        //let vals=$(this).val();
         /*
         order=$(this).val();
         console.log(order);
@@ -72,7 +72,7 @@ function search(){
         console.log(order);
         */
 
-        var item_list=document.getElementById('item-list');
+        let item_list=document.getElementById('item-list');
         let searchtextbox=document.getElementById('searchtextbox');
         $("#loading").fadeIn(); // ローディング表示
         searchtextbox.value=keyword;
@@ -101,14 +101,14 @@ function search(){
             //$("#pos").text(data.position); //取得した集合場所の値を、html上のID値がposの箇所に代入。
             //$("#time").text(data.ap_time); //取得した集合時刻の値を、html上のID値がtimeの箇所に代入。
 
-            //var frag=document.createDocumentFragment();
+            //let frag=document.createDocumentFragment();
             /*
-            var td_cnt = 0;
+            let td_cnt = 0;
             while(item_list.firstChild)item_list.removeChild(item_list.firstChild); // 子要素を全部削除
             item_list.insertAdjacentHTML('beforeend','<tr>');
             */
-            var disp_str='';
-            var id=0;
+            let disp_str='';
+            let id=0;
             item_data=data;
             //console.log(item_data);
             for(let item of item_data){
@@ -148,11 +148,11 @@ function search(){
 		$("#loading").fadeOut();
     }
 }
-function cart_update(product_data={}){
+function cart_update(add_data={}){
   // 引数が何もないときphpのsessionのカート情報を呼び出すだけの機能になる
   $.post({
     url: 'add_cart.php',
-    data:product_data,
+    data:add_data,
     dataType: 'json' //必須。json形式で返すように設定
   }).done(function(data){
     let cart=data;
@@ -160,14 +160,16 @@ function cart_update(product_data={}){
     console.log(item_data);
     
     for(let key in cart){
-      let cart_id=item_data.findIndex((u)=>u.title===key);
+      let id=item_data.findIndex(u=>((u.item_id)==key));
+      console.log(item_data);
       console.log(key);
-      console.log(cart_id);
+      console.log(id);
       console.log(cart[key].num);
-      if(cart_id!=-1){
-        $('.add_goods[value='+cart_id+']').text('追加済み');
-        $("#goods"+cart_id).val(cart[key].num);
-        //console.log($("#goods"+cart_id));
+      if(id!=-1){
+      //if(item_data.item_id){
+        $('.add_goods[value='+id+']').text('追加済み');
+        $("#goods"+id).val(cart[key].num);
+        //console.log($("#goods"+id));
       }
     }
     
@@ -180,10 +182,10 @@ function cart_update(product_data={}){
 $(function() {
   let goods = new Object();
   $(document).on('click',".add_goods",function(){
-    var id=$(this).val();
-    var data=item_data[id];
-    var quantity  = $("#goods"+id).val();        //選択した数量
-    var sub_total = data.price * quantity;  //単価 * 数量
+    let id=$(this).val();
+    let data=item_data[id];
+    let quantity  = $("#goods"+id).val();        //選択した数量
+    let sub_total = data.price * quantity;  //単価 * 数量
     goods[id] = {
       'name':data.title,
       'price':data.price,
@@ -194,22 +196,28 @@ $(function() {
     console.log("#goods"+id);
     console.log(quantity);
     console.log(sub_total);
-    product_data={
+    /*
+    add_data={
       "product_url": data.url,
       "product_name":data.title,
       "num":quantity,
     };
-
-    cart_update(product_data);
+    */
+    //add_data=JSON.stringify(item_data[id]); // 下手にjsonにする必要はない
+    add_data=item_data[id]; // 下手にjsonにする必要はない
+    add_data.num=quantity; // item_dataにはnumがないため、numを追加
+    console.log(add_data);
+    cart_update(add_data);
+    //cart_update(item_data[id]); // そのままitem_data[id]を送るとnumが送れない
     cart_open();
   });
          
-  var cart_open = function(){
+  let cart_open = function(){
     $("#goods_list").html('');
     
-    var html = '<ul>';
-    var key;
-    var total = 0;
+    let html = '<ul>';
+    let key;
+    let total = 0;
     for (key in goods){
       html  += '<li>'+goods[key].name+' 個数:'+goods[key].quantity+' &nbsp;&nbsp;'+comma( goods[key].sub_total )+'円</li>';
       total += goods[key].sub_total;
@@ -218,7 +226,7 @@ $(function() {
     html += '<div id="total">合計:'+comma( total )+'円</div>';
     
     //オブジェクトなのでそのままではPOSTの出来ないためJSON形式にする
-    var data = JSON.stringify(goods);
+    let data = JSON.stringify(goods);
     
     $("#goods_list").html(html); //上部カートにHTMLを挿入
     $("#cart_detail").show();    //カートを開く

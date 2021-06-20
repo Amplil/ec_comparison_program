@@ -42,6 +42,10 @@ class ItemSearch{
         if (in_array('amazon',$this->shop_disp)) $this->amazon();
         if (in_array('ebay',$this->shop_disp)) $this->ebay();
         $this->sort_items();
+        foreach($this->items as $key=>$item){
+            $this->items[$key]['item_id']=md5($item['url']);
+            //$item['product_id']=md5($item['url']);
+        }
         return $this->items;
     }
     function rakuten(){
