@@ -79,9 +79,9 @@ class ItemSearch{
         }
     }
     function amazon(){
-        $sort_str=['review-rank'=>'relevanceblender',
+        $sort_str=['review-rank'=>'review-rank',
                 'price-asc-rank'=>'price-asc-rank',
-                'price-desc-rank'=>'price-desc-rank']; // 各ショップでのsortの名称
+                'price-desc-rank'=>'price-desc-rank']; // 各ショップでのsortの名称 おすすめ（relevanceblender）でなくreview-rankにする
         $hits_set = 10; // 取得件数（商品数）
         $url="https://www.amazon.co.jp/s?k=" 
             . htmlspecialchars(urlencode($this->keyword))
@@ -103,7 +103,11 @@ class ItemSearch{
             $title = $xpath->evaluate('string(.//div/div/div[2]/h2/a/span)', $node);
             $price = str_replace(array('￥', ','), array('', ''),$xpath->evaluate('string(.//span[contains(@class, "a-price-whole")])', $node));
             if ($price == "") continue;
-            $all_items[] = ['image' => $image, 'url' => $url, 'title' => $title, 'price' => $price];
+            $url_processed=substr($url,0,strcspn($url,'?')); // 加工したURL いつも同じURLになるように'?'以降は削除する
+            //echo '<**url**>'.$url;
+            //echo 'xpath'.$xpath->evaluate('string(.//a[contains(@class, "a-link-normal")]/@href)', $node);
+            //echo 'url_processed'.$url_processed;
+            $all_items[] = ['image' => $image, 'url' => $url_processed, 'title' => $title, 'price' => $price];
         }
         $this->items=array_merge($this->items,array_slice($all_items,0,$hits_set)); // 0番目から$hits_set個取得して$this->itemsと結合
     }
