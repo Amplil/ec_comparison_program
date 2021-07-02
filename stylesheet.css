@@ -4,13 +4,15 @@
 .header{
   font-size:1.6rem;
 }
+/*
 .flexbox{
-  display : -webkit-box;     /* old Android */
-  display : -webkit-flex;    /* Safari etc. */
-  display : -ms-flexbox;     /* IE10        */
+  display : -webkit-box;
+  display : -webkit-flex;
+  display : -ms-flexbox;
   display : flex;
 }
-  
+*/
+/*  
 #searchtextbox{
   width:240px;height:28px;
   vertical-align: top;
@@ -20,7 +22,7 @@
   height:34px;
   vertical-align: top;
 }
-
+*/
 .select>div{
   float: left;
 }

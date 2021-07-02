@@ -114,7 +114,7 @@ function search(){
             for(let item of item_data){
               //console.log(item)
 
-              disp_str=disp_str.concat('<div class="item"><a href="'
+              disp_str=disp_str.concat('<div class="item col-xs-3"><a href="'
               +item['url']+'" target="_blank"><div class="img-block"><img src="'
               +item['image']+'"></div><div>'
               +item['title']+'</div><div>'
