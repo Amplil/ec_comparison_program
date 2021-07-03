@@ -86,6 +86,7 @@ class ItemSearch{
         $url="https://www.amazon.co.jp/s?k=" 
             . htmlspecialchars(urlencode($this->keyword))
             ."&s=".htmlspecialchars(urlencode($sort_str[$this->sort]));
+        #echo "***search url: ".$url." ***";
         $ch = curl_init(); // cURLセッションを初期化
         curl_setopt($ch, CURLOPT_URL, $url); // 取得するURLを指定
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // 実行結果を文字列で返す
@@ -100,7 +101,7 @@ class ItemSearch{
         foreach ($xpath->query('//span[3]/div[2]/div') as $node) {
             $image = $xpath->evaluate('string(.//img[contains(@class, "s-image")]/@src)', $node);
             $url = 'https://www.amazon.co.jp/' . $xpath->evaluate('string(.//a[contains(@class, "a-link-normal")]/@href)', $node);
-            $title = $xpath->evaluate('string(.//div/div/div[2]/h2/a/span)', $node);
+            $title = $xpath->evaluate('string(.//div/div[2]/div[1]/h2/a/span)', $node);
             $price = str_replace(array('￥', ','), array('', ''),$xpath->evaluate('string(.//span[contains(@class, "a-price-whole")])', $node));
             if ($price == "") continue;
             $url_processed=substr($url,0,strcspn($url,'?')); // 加工したURL いつも同じURLになるように'?'以降は削除する
