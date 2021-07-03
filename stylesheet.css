@@ -12,11 +12,17 @@
   display : flex;
 }
 */
-/*  
+.input-group{
+  width: 40%;
+}
+/*
 #searchtextbox{
   width:240px;height:28px;
   vertical-align: top;
 }
+*/
+
+/*  
 #searchbtn{
   font-size:1.1rem;
   height:34px;

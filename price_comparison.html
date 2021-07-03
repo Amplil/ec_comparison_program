@@ -35,13 +35,11 @@
         <!-- <p><a href="price_comparison_cart.php" target="_blank" rel="noopener noreferrer">カートを見る</a></p> -->
         <p><a href="price_comparison_cart.php">カートを見る</a></p>
         <!--<form method='post' action=''>-->
-            <div col-xs-3>
-                <form action method="get">
+        <form action method="get">
             <div class="input-group">
                 <input type='text' id='searchtextbox' class="form-control" placeholder='キーワードで探す' name="search-key">
                 <!--<button class="btn btn-primary">検索</button>-->
-                <span input-group-btn>
-                    <span class="glyphicon glyphicon-search"></span>
+                <span class="input-group-btn">
                     <!--<input class="btn btn-secondary" id="searchbtn" type="submit" value="Go">-->
                     <button class="btn btn-secondary" id="searchbtn" type="submit"><i class="fas fa-search"></i></button>
                 </span>
@@ -52,7 +50,6 @@
             </div>
             <!--<input type="hidden" name="kind" value="change_items">-->
         </form>
-            </div>
         <!--</form>-->
         <div id="loading"><img src="img/loading.gif"></div>
         <div id="item-list" class="row"></div>
@@ -89,5 +86,9 @@
          data-full-width-responsive="true"></ins>
     <script>
          (adsbygoogle = window.adsbygoogle || []).push({});
-    </script></body>
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+            crossorigin="anonymous"></script>
+    </body>
 </html>

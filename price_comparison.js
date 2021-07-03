@@ -14,9 +14,10 @@ let name=document.createElement('input');
 let text=document.createTextNode(message);
 */
 let v = new URLSearchParams(window.location.search);
-keyword=v.get('search-key');
-v_shop_disp=v.getAll('shop-disp[]');
-v_order=v.get('order-select');
+let keyword=v.get('search-key');
+//console.log('keyword: '+keyword);
+let v_shop_disp=v.getAll('shop-disp[]');
+let v_order=v.get('order-select');
 if(v_shop_disp!=null)shop_disp=v_shop_disp;
 if(v_order!=null)order=v_order;
 
