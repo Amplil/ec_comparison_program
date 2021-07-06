@@ -75,7 +75,7 @@ function search(){
 
         let item_list=document.getElementById('item-list');
         let searchtextbox=document.getElementById('searchtextbox');
-        $("#loading").fadeIn(); // ローディング表示
+        //$("#loading").fadeIn(); // ローディング表示
         searchtextbox.value=keyword;
         while(item_list.firstChild){
             item_list.removeChild(item_list.firstChild); // 子要素を全部削除

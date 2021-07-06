@@ -13,7 +13,7 @@
 }
 */
 .input-group{
-  width: 40%;
+  width: 70%;
 }
 /*
 #searchtextbox{
@@ -85,4 +85,11 @@
   padding: 5px;
   list-style: none;
   border-bottom: #ddd dashed 1px;
+}
+.sidebar_fixed {
+  position: sticky;
+  top: 60px;
+}
+.sidebar_content {
+  margin-bottom: 100px;
 }
