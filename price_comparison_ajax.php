@@ -42,10 +42,6 @@ class ItemSearch{
         if (in_array('amazon',$this->shop_disp)) $this->amazon();
         if (in_array('ebay',$this->shop_disp)) $this->ebay();
         $this->sort_items();
-        foreach($this->items as $key=>$item){
-            $this->items[$key]['item_id']=md5($item['url']);
-            //$item['product_id']=md5($item['url']);
-        }
         return $this->items;
     }
     function rakuten(){
@@ -56,8 +52,8 @@ class ItemSearch{
         $hits_set = 10; // 1ページあたりの取得件数（商品数）
         //$url_word = htmlspecialchars(urlencode($this->keyword));
         //$url_sort = htmlspecialchars(urlencode($sort_str[$this->sort]));
-        $applicationId = $this->shop_data["applicationId"]; // アプリID
-        $affiliateId = $this->shop_data["affiliateId"]; // アフィリエイトID
+        $applicationId = $this->shop_data["rakuten"]["applicationId"]; // アプリID
+        $affiliateId = $this->shop_data["rakuten"]["affiliateId"]; // アフィリエイトID
         // 楽天リクエストURLから楽天市場の商品情報を取得
         $url = "https://app.rakuten.co.jp/services/api/IchibaItem/Search/20130805?format=xml&keyword=" 
             . htmlspecialchars(urlencode($this->keyword))
@@ -75,7 +71,7 @@ class ItemSearch{
             //$detail = (string)$item->itemCaption;
             //$detail = mb_substr($detail, 0, 30, "UTF-8") . '・・・';
             $price = (string)$item->itemPrice;
-            $this->items[] = ['image' => $mediumImageUrl, 'url' => $affiliateUrl, 'title' => $title, 'price' => $price];
+            $this->items[] = ['item_id'=>md5($affiliateUrl),'image' => $mediumImageUrl, 'url' => $affiliateUrl, 'title' => $title, 'price' => $price];
         }
     }
     function amazon(){
@@ -100,15 +96,17 @@ class ItemSearch{
         $xpath = new DOMXPath($dom); // DOMDocumentからXPath式を実行するためのDOMXPathを生成
         foreach ($xpath->query('//span[3]/div[2]/div') as $node) {
             $image = $xpath->evaluate('string(.//img[contains(@class, "s-image")]/@src)', $node);
-            $url = 'https://www.amazon.co.jp/' . $xpath->evaluate('string(.//a[contains(@class, "a-link-normal")]/@href)', $node);
+            $url = 'https://www.amazon.co.jp' . $xpath->evaluate('string(.//a[contains(@class, "a-link-normal")]/@href)', $node);
             $title = $xpath->evaluate('string(.//div/div[2]/div[1]/h2/a/span)', $node);
             $price = str_replace(array('￥', ','), array('', ''),$xpath->evaluate('string(.//span[contains(@class, "a-price-whole")])', $node));
             if ($price == "") continue;
-            $url_processed=substr($url,0,strcspn($url,'?')); // 加工したURL いつも同じURLになるように'?'以降は削除する
+            $item_id=md5(substr($url,0,strcspn($url,'?'))); // 加工したURL いつも同じURLになるように'?'以降は削除したあと、ハッシュ化したものをIDとする。
+            //plain_url=substr($url,0,strcspn($url,'?')); // 加工したURL いつも同じURLになるように'?'以降は削除
+            $affiliateUrl=$url.'&tag=aikotobahaabu-22'; // 元のURLにそのままアフィリエイトタグを付ける
             //echo '<**url**>'.$url;
             //echo 'xpath'.$xpath->evaluate('string(.//a[contains(@class, "a-link-normal")]/@href)', $node);
             //echo 'url_processed'.$url_processed;
-            $all_items[] = ['image' => $image, 'url' => $url_processed, 'title' => $title, 'price' => $price];
+            $all_items[] = ['item_id'=>$item_id,'image' => $image,'url' => $affiliateUrl,'title' => $title,'price' => $price];
         }
         $this->items=array_merge($this->items,array_slice($all_items,0,$hits_set)); // 0番目から$hits_set個取得して$this->itemsと結合
     }
@@ -118,12 +116,15 @@ class ItemSearch{
                 'price-desc-rank'=>'PricePlusShippingHighest']; // 各ショップでのsortの名称
         //$sort = 'PricePlusShippingLowest';
         $hits_set = 10; // 取得件数（商品数）
-        $appname=$this->shop_data["appname"]; // SECURITY-APPNAME
+        $appname=$this->shop_data["ebay"]["appname"]; // SECURITY-APPNAME
+        $affiliateId=$this->shop_data["ebay"]["affiliateId"];
         // ebayリクエストURLからebay市場の商品情報を取得
-        $url = "https://svcs.ebay.com/services/search/FindingService/v1?SECURITY-APPNAME="
-            .$appname
-            ."&OPERATION-NAME=findItemsByKeywords&SERVICE-VERSION=1.0.0&RESPONSE-DATA-FORMAT=JSON&REST-PAYLOAD&keywords="
-            .htmlspecialchars(urlencode($this->keyword))
+        $url = "https://svcs.ebay.com/services/search/FindingService/v1?"
+            ."SECURITY-APPNAME=".$appname
+            ."&OPERATION-NAME=findItemsByKeywords&SERVICE-VERSION=1.0.0&RESPONSE-DATA-FORMAT=JSON&REST-PAYLOAD"
+            ."&affiliate.networkId=9"
+            ."&affiliate.trackingId=".$affiliateId
+            ."&keywords=".htmlspecialchars(urlencode($this->keyword))
             ."&paginationInput.entriesPerPage=".$hits_set
             ."&sortOrder=".htmlspecialchars(urlencode($sort_str[$this->sort]))
             ."&GLOBAL-ID=EBAY-US&siteid=0";
@@ -138,7 +139,7 @@ class ItemSearch{
                 $detail = $item->title[0];
                 //$price = $item->sellingStatus[0]->currentPrice[0];
                 $price = ($item->sellingStatus[0]->convertedCurrentPrice[0]->__value__)*105; // USDのためJPYに直す
-                $this->items[] = ['image' => $mediumImageUrl, 'url' => $affiliateUrl, 'title' => $detail, 'price' => $price];
+                $this->items[] = ['item_id'=>md5($affiliateUrl),'image' => $mediumImageUrl, 'url' => $affiliateUrl, 'title' => $detail, 'price' => $price];
             }
         }
         
