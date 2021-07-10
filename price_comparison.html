@@ -49,7 +49,14 @@
                 <!--<input type="hidden" name="kind" value="change_items">-->
             </form>
             <!--</form>-->
-            <div id="loading"><img src="img/loading.gif"></div>
+            <!--<div id="loading"><img src="img/loading.gif"></div>-->
+            <div id="loading">
+                <div class="d-flex justify-content-center m-5">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
             <div id="item-list" class="row"></div>
         </div>
 
@@ -82,7 +89,7 @@
         <input type="hidden" id="data" name="data" value="" />
     </form>
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://unpkg.com/infinite-scroll@4/dist/infinite-scroll.pkgd.min.js"></script>
+    <script src="lazysizes.min.js" async=""></script>
     <script src="price_comparison.js"></script>
 
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>

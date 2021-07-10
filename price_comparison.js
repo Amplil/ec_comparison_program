@@ -75,7 +75,7 @@ function search(){
 
         let item_list=document.getElementById('item-list');
         let searchtextbox=document.getElementById('searchtextbox');
-        //$("#loading").fadeIn(); // ローディング表示
+        $("#loading").fadeIn(); // ローディング表示
         searchtextbox.value=keyword;
         while(item_list.firstChild){
             item_list.removeChild(item_list.firstChild); // 子要素を全部削除
@@ -112,10 +112,11 @@ function search(){
             let id=0;
             item_data=data;
             //console.log(item_data);
+            $("#loading").fadeOut(100);
+
             for(let item of item_data){
               //console.log(item)
-
-              disp_str=disp_str.concat('<div class="item col-xs-3"><a href="'
+              disp_str=disp_str.concat('<div class="item col-xs-3 lazyload"><a href="'
               +item['url']+'" target="_blank"><div class="img-block"><img src="'
               +item['image']+'"></div><div>'
               +item['title']+'</div><div>'
@@ -146,7 +147,6 @@ function search(){
         }).fail(function(XMLHttpRequest, textStatus, errorThrown){
             alert(errorThrown);
         })
-		$("#loading").fadeOut();
     }
 }
 function cart_update(add_data={}){

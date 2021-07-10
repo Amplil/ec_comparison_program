@@ -12,9 +12,11 @@
   display : flex;
 }
 */
+/*
 .input-group{
   width: 70%;
 }
+*/
 /*
 #searchtextbox{
   width:240px;height:28px;
@@ -65,10 +67,7 @@
 }
 #loading{
   display:none; /* ローディングになるまで非表示 */
-	position:absolute;
-	left:50%;
-	top:20%;
-	margin-left:-30px;
+  /* margin:auto; */
 }
 #cart_detail{
   display: none;
