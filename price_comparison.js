@@ -111,43 +111,45 @@ function search(){
             let disp_str='';
             let id=0;
             //console.log(item_data.length);
-            $("#loading").fadeOut(100);
-            if(item_data.length===0){
-              disp_str="検索した結果何も見つかりませんでした。";
-              //console.log("検索した結果何も見つかりませんでした。");
-            }
-            else{
-              for(let item of item_data){
-                //console.log(item)
-                disp_str=disp_str.concat('<div class="item col-xs-3 lazyload"><a href="'
-                +item['url']+'" target="_blank"><div class="img-block"><img src="'
-                +item['image']+'"></div><div>'
-                +item['title']+'</div><div>'
-                +"￥"+item['price']+'</div></a>');
-
-                /*
-                item_list.insertAdjacentHTML('beforeend',
-                '<div class="item"><a href="'
-                +item['url']+'" target="_blank"><div class="img-block"><img src="'
-                +item['image']+'"></div><div>'
-                +item['title']+'</div><div>'
-                +"￥"+item['price']+'</div></a></div>');
-                */
-
-                disp_str=disp_str.concat('<select id=goods'+id+'>');
-                for (let i = 1; i < 10; i++){
-                    disp_str=disp_str.concat('<option value="'+i+'">'+i+'</option>');
-                } // 個数選択
-                disp_str=disp_str.concat('</select><button type="button" class="add_goods" value="'+id+'">カートに入れる</button></div>');
-                id++;
+            $("#loading").fadeOut(100,function(){
+              if(item_data.length===0){
+                disp_str="検索した結果何も見つかりませんでした。";
+                //console.log("検索した結果何も見つかりませんでした。");
               }
-            }
-            //console.log(disp_str)
-            item_list.insertAdjacentHTML('beforeend',disp_str);
-            //console.log(data[1])
-            //console.log(data[1].image)
-            
-            cart_update(); // searchが終わってから実行するようにする
+              else{
+                for(let item of item_data){
+                  //console.log(item)
+                  disp_str=disp_str.concat('<div class="item col-xs-3 lazyload"><a href="'
+                  +item['url']+'" target="_blank"><div class="img-block"><img src="'
+                  +item['image']+'"></div><div>'
+                  +item['title']+'</div><div>'
+                  +"￥"+item['price']+'</div></a>');
+
+                  /*
+                  item_list.insertAdjacentHTML('beforeend',
+                  '<div class="item"><a href="'
+                  +item['url']+'" target="_blank"><div class="img-block"><img src="'
+                  +item['image']+'"></div><div>'
+                  +item['title']+'</div><div>'
+                  +"￥"+item['price']+'</div></a></div>');
+                  */
+
+                  disp_str=disp_str.concat('<select id=goods'+id+'>');
+                  for (let i = 1; i < 10; i++){
+                      disp_str=disp_str.concat('<option value="'+i+'">'+i+'</option>');
+                  } // 個数選択
+                  disp_str=disp_str.concat('</select><button type="button" class="add_goods" value="'+id+'">カートに入れる</button></div>');
+                  id++;
+                }
+              }
+              //console.log(disp_str)
+              item_list.insertAdjacentHTML('beforeend',disp_str);
+              //console.log(data[1])
+              //console.log(data[1].image)
+              
+              cart_update(); // searchが終わってから実行するようにする
+            });
+
         }).fail(function(XMLHttpRequest, textStatus, errorThrown){
             alert(errorThrown);
         })

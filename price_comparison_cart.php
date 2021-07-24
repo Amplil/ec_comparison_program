@@ -93,40 +93,46 @@
 
     <script src="//code.jquery.com/jquery-3.1.1.min.js"></script>
     <!-- <script src="price_comparison.js"></script> -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+        crossorigin="anonymous"></script>
     <script>
-        $('#copy-button')
-        // tooltip設定
-        .tooltip({
-            trigger: 'manual'
-        })
-        // tooltip表示後の動作を設定
-        .on('shown.bs.tooltip', function(){
-            setTimeout((function(){
-            $(this).tooltip('hide');
-            }).bind(this), 1500);
-        })
-        // クリック時の動作を設定
-        .on('click', function(){
-            //$('#items').select();
+        setTimeout(function () {
+            $('#copy-button')
+            // tooltip設定
+            .tooltip({
+                trigger: 'manual',
+                placement:'right'
+            })
+            // tooltip表示後の動作を設定
+            .on('shown.bs.tooltip', function(){
+                setTimeout((function(){
+                    $(this).tooltip('hide');
+                }).bind(this), 1500);
+            })
+            // クリック時の動作を設定
+            .on('click', function(){
+                //$('#items').select();
 
-            let copyTarget = document.getElementById("items");
-            //document.write(copyTarget.value);
-            let range = document.createRange();
-            range.selectNode(copyTarget);
-            window.getSelection().addRange(range);
+                let copyTarget = document.getElementById("items");
+                //document.write(copyTarget.value);
+                let range = document.createRange();
+                range.selectNode(copyTarget);
+                window.getSelection().addRange(range);
 
-            const copyResult = document.execCommand('copy');
-            console.log(copyResult)
-            // コピー結果によって表示変更
-            if(copyResult){
-                $('#copy-button').attr('data-original-title', 'コピーしました');
-            }else{
-                $('#copy-button').attr('data-original-title', 'コピー失敗しました');
-            }
-            // tooltip表示
-            $(this).tooltip('show');
-        });
+                const copyResult = document.execCommand('copy');
+                console.log(copyResult)
+                // コピー結果によって表示変更
+                if(copyResult){
+                    $('#copy-button').attr('data-bs-original-title', 'コピーしました');
+                }else{
+                    $('#copy-button').attr('data-bs-original-title', 'コピー失敗しました');
+                }
+                // tooltip表示
+                $(this).tooltip('show');
+            });
+        }, 545*1.33); // 545ms timing to load jQuery.js + network estimated delay 
 
         /*
         function copyToClipboard() {
