@@ -1,3 +1,4 @@
+<!-- いずれajaxで呼び出されるプログラムにする -->
 <!DOCTYPE html>
 <html>
 <head>

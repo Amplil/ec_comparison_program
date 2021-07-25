@@ -14,7 +14,7 @@
     
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <TITLE>オープンマーケット！</TITLE>
+    <TITLE>オープンマーケット！ショッピングカート</TITLE>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.1/css/all.css">
     <link rel="stylesheet" href="stylesheet.css">
@@ -29,42 +29,21 @@
     <div id="container" class="container">
     <div class="row">
         <div class="col">
-            <div class="header">いろいろな商品を比較！</div>
-            <!-- <p><a href="price_comparison_cart.php" target="_blank" rel="noopener noreferrer">カートを見る</a></p> -->
-            <!--<form method='post' action=''>-->
-            <form action method="get">
-                <div class="input-group">
-                    <input type='text' id='searchtextbox' class="form-control" placeholder='キーワードで探す' name="search-key">
-                    <!--<button class="btn btn-primary">検索</button>-->
-                    <span class="input-group-btn">
-                        <!--<input class="btn btn-secondary" id="searchbtn" type="submit" value="Go">-->
-                        <button class="btn btn-secondary" id="searchbtn" type="submit"><i class="fas fa-search"></i></button>
-                    </span>
-                    <span class="btn btn-light"><a href="price_comparison_cart.html"><i class="fas fa-shopping-cart"></i>カートを見る</a></span>
-                </div>
-                <div class="select">
-                    <div id="shop-select"></div>
-                    <select id="order-select" name="order-select"></select>
-                </div>
-                <!--<input type="hidden" name="kind" value="change_items">-->
-            </form>
-            <!--</form>-->
-            <!--<div id="loading"><img src="img/loading.gif"></div>-->
-            <div id="loading">
-                <div class="d-flex justify-content-center m-5">
-                    <div class="spinner-border" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
+            <div class="header">ショッピングカート</div>
+            <p><a href="price_comparison_delete.php">カートをすべて空に</a></p>
+
+            <!-- カートの中身と合計 -->
+            <div id="cart_detail">
+                <div id="goods_list">
+                    <table style="text-align:center" id="items">
+                        <tr><th>商品</th><th>個数</th><th>数量</th><th>削除ボタン</th></tr>
+                    </table>
                 </div>
             </div>
-            <div id="item-list" class="row"></div>
+            <button id="copy-button">Copy text</button>
         </div>
 
         <div class="col-3">
-            <!-- カートの中身と合計 -->
-            <div id="cart_detail">
-                <div id="goods_list"></div>
-            </div>
             <div class="sidebar_fixed">
                 <!-- サイドバー広告 -->
                 <ins class="adsbygoogle"
@@ -81,7 +60,7 @@
 
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="lazysizes.min.js" async=""></script>
-    <script src="price_comparison.js"></script>
+    <script src="price_comparison_cart.js"></script>
 
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <script>

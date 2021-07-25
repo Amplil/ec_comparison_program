@@ -140,7 +140,7 @@ function search(){
                   for (let i = 1; i < 10; i++){
                       disp_str=disp_str.concat('<option value="'+i+'">'+i+'</option>');
                   } // 個数選択
-                  disp_str=disp_str.concat('</select><button type="button" class="add_goods btn-warning" value="'+id+'">カートに入れる</button></div></div>');
+                  disp_str=disp_str.concat('</select><button type="button" class="btn add_goods" value="'+id+'">カートに入れる</button></div></div>');
                   id++;
                 }
               }
@@ -198,8 +198,12 @@ $(function() {
     let quantity  = $("#goods"+id).val();        //選択した数量
     let sub_total = data.price * quantity;  //単価 * 数量
     goods[id] = {
-      'name':data.title,
+      'item_id':data.item_id,
+      'image':data.image,
+      'url':data.url,
+      'title':data.title,
       'price':data.price,
+      'shop':data.shop,
       'quantity':quantity,
       'sub_total':sub_total
     };
@@ -226,27 +230,27 @@ $(function() {
   let cart_open = function(){
     $("#goods_list").html('');
     
-    let html = '<ul>';
+    let html = '';
     let key;
     let total = 0;
+    html += '<div>';
     for (key in goods){
-      html  += '<li>'+goods[key].name+' 個数:'+goods[key].quantity+' &nbsp;&nbsp;'+comma( goods[key].sub_total )+'円</li>';
+      html += '<div class="item col-xs-3">';
+      html += '<div class="img-block"><img src="'+goods[key].image+'"></div>';
+      html += '<i class="far fa-trash-alt"></i></div>';
       total += goods[key].sub_total;
     }
-    html += '</ul>';
-    html += '<div id="total">合計:'+comma( total )+'円</div>';
-    
+    html += '</div>';
+    html = '<div id="total">小計:'+comma( total )+'円</div>'+html;
+
     //オブジェクトなのでそのままではPOSTの出来ないためJSON形式にする
-    let data = JSON.stringify(goods);
+    //let data = JSON.stringify(goods);
     
     $("#goods_list").html(html); //上部カートにHTMLを挿入
     $("#cart_detail").show();    //カートを開く
-    $("#data").val(data);        //POST[data]にカートの中身をセット
+    //$("#data").val(data);        //POST[data]にカートの中身をセット
   }
   
-  $(document).on('click',"#go_cart a",function(){ // フォームをPOSTする
-    document.form.submit();
-  });
   $(document).on('click',"#close_cart span",function(){ // カートを閉じる
     $("#cart_detail").hide();
   });

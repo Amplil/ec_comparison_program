@@ -71,6 +71,7 @@
   display:none; /* ローディングになるまで非表示 */
   /* margin:auto; */
 }
+/*
 #cart_detail{
   display: none;
   padding: 10px;
@@ -87,6 +88,7 @@
   list-style: none;
   border-bottom: #ddd dashed 1px;
 }
+*/
 .sidebar_fixed {
   position: sticky;
   top: 60px;
@@ -99,4 +101,8 @@
 }
 .a-price{
   color:#B12704;
+}
+.add_goods{
+  border-radius:5px;
+  background-color: #ffd814;
 }
