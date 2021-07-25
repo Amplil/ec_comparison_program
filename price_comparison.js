@@ -1,6 +1,6 @@
 let shop_item ={rakuten:'楽天',amazon:'Amazon',ebay:'ebay'}; // 表示の順番
 //let order_item = ['人気順', '価格の安い順', '価格の高い順']; // 表示の順番
-let order_str = {'review-rank':'人気順', 'price-asc-rank':'価格の安い順', 'price-desc-rank':'価格の高い順'}; // 表示の順番
+let order_str = {'relevanceblender':'おすすめ順','review-rank':'人気順', 'price-asc-rank':'価格の安い順', 'price-desc-rank':'価格の高い順'}; // 表示の順番
 let order = 'price-asc-rank';
 //let shop_disp={rakuten:true,amazon:false,ebay:true};
 let shop_disp=['rakuten','ebay'];
@@ -94,7 +94,7 @@ function search(){
                 "order":order,
             },
             dataType: 'json' //必須。json形式で返すように設定
-        }).done(function(item_data){
+        }).done(function(data){ // ここでitem_dataを使ってしまうと、item_dataはこのブロック内だけで使える変数となってしまう。
             //console.log(data[0]['url'])
             //console.log(data)
 
@@ -110,6 +110,7 @@ function search(){
             */
             let disp_str='';
             let id=0;
+            item_data=data; // グローバルスコープのitem_dataにブロック内の変数であるdataの値を代入
             //console.log(item_data.length);
             $("#loading").fadeOut(100,function(){
               if(item_data.length===0){
@@ -121,8 +122,9 @@ function search(){
                   //console.log(item)
                   disp_str=disp_str.concat('<div class="item col-xs-3 lazyload"><a href="'
                   +item['url']+'" target="_blank"><div class="img-block"><img src="'
-                  +item['image']+'"></div><div>'
-                  +item['title']+'</div><div>'
+                  +item['image']+'"></div><div class="pos-left">'
+                  +'['+shop_item[item['shop']]+'] '
+                  +item['title']+'</div><div class="pos-left a-price">'
                   +"￥"+item['price']+'</div></a>');
 
                   /*
@@ -134,11 +136,11 @@ function search(){
                   +"￥"+item['price']+'</div></a></div>');
                   */
 
-                  disp_str=disp_str.concat('<select id=goods'+id+'>');
+                  disp_str=disp_str.concat('<div class="input-group-btn"><select id=goods'+id+'>');
                   for (let i = 1; i < 10; i++){
                       disp_str=disp_str.concat('<option value="'+i+'">'+i+'</option>');
                   } // 個数選択
-                  disp_str=disp_str.concat('</select><button type="button" class="add_goods" value="'+id+'">カートに入れる</button></div>');
+                  disp_str=disp_str.concat('</select><button type="button" class="add_goods btn-warning" value="'+id+'">カートに入れる</button></div></div>');
                   id++;
                 }
               }
@@ -163,15 +165,15 @@ function cart_update(add_data={}){
     dataType: 'json' //必須。json形式で返すように設定
   }).done(function(data){
     let cart=data;
-    console.log(cart);
-    console.log(item_data);
+    //console.log(cart);
+    //console.log(item_data);
     
     for(let key in cart){
       let id=item_data.findIndex(u=>((u.item_id)==key));
-      console.log(item_data);
-      console.log(key);
-      console.log(id);
-      console.log(cart[key].num);
+      //console.log(item_data);
+      //console.log(key);
+      //console.log(id);
+      //console.log(cart[key].num);
       if(id!=-1){
       //if(item_data.item_id){
         $('.add_goods[value='+id+']').text('追加済み');
@@ -191,6 +193,8 @@ $(function() {
   $(document).on('click',".add_goods",function(){
     let id=$(this).val();
     let data=item_data[id];
+    //console.log(id);
+    //console.log(data);
     let quantity  = $("#goods"+id).val();        //選択した数量
     let sub_total = data.price * quantity;  //単価 * 数量
     goods[id] = {
@@ -200,9 +204,9 @@ $(function() {
       'sub_total':sub_total
     };
 
-    console.log("#goods"+id);
-    console.log(quantity);
-    console.log(sub_total);
+    //console.log("#goods"+id);
+    //console.log(quantity);
+    //console.log(sub_total);
     /*
     add_data={
       "product_url": data.url,
@@ -213,7 +217,7 @@ $(function() {
     //add_data=JSON.stringify(item_data[id]); // 下手にjsonにする必要はない
     add_data=item_data[id]; // 下手にjsonにする必要はない
     add_data.num=quantity; // item_dataにはnumがないため、numを追加
-    console.log(add_data);
+    //console.log(add_data);
     cart_update(add_data);
     //cart_update(item_data[id]); // そのままitem_data[id]を送るとnumが送れない
     cart_open();

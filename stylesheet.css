@@ -41,7 +41,7 @@
   flex-wrap        : wrap;
 }
 .item{
-  margin     : 3px;
+  margin     : 15px;
   width      : 300px;
   text-align : center;
 }
@@ -56,10 +56,12 @@
   width: auto;
   height: auto;*/
   object-fit: contain;
- }
+}
+/*
 .item p{
   margin-top: 10px;
 }
+*/
 .img-block{
   height:150px;
   width:150px;
@@ -91,4 +93,10 @@
 }
 .sidebar_content {
   margin-bottom: 100px;
+}
+.pos-left{
+  text-align: left;
+}
+.a-price{
+  color:#B12704;
 }
