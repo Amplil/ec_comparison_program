@@ -134,37 +134,39 @@ class ItemSearch{
         //$this->items=array_merge($this->items,array_slice($all_items,0,$hits_set)); // 0番目から$hits_set個取得して$this->itemsと結合
     }
     function ebay(){
-        $sort_str=['relevanceblender'=>'BestMatch',
-                'review-rank'=>'BestMatch',
-                'price-asc-rank'=>'PricePlusShippingLowest',
-                'price-desc-rank'=>'PricePlusShippingHighest']; // 各ショップでのsortの名称
-        //$sort = 'PricePlusShippingLowest';
+        $sort_str=['relevanceblender'=>'',
+                'review-rank'=>'distance',
+                'price-asc-rank'=>'price',
+                'price-desc-rank'=>'-price']; // 各ショップでのsortの名称
         $hits_set = 10; // 取得件数（商品数）
-        $appname=$this->shop_data["ebay"]["appname"]; // SECURITY-APPNAME
+        $AccessToken=$this->shop_data["NewEbayApiAccess"]["AccessToken"];
         $affiliateId=$this->shop_data["ebay"]["affiliateId"];
+        $opts = array(
+          'http'=>array(
+            'method'=>"GET",
+            'header'=>"Authorization: Bearer $AccessToken\r\n".
+                      "X-EBAY-C-ENDUSERCTX: affiliateCampaignId=$affiliateId\r\n"
+          )
+        );
+        $context = stream_context_create($opts);
         // ebayリクエストURLからebay市場の商品情報を取得
-        $url = "https://svcs.ebay.com/services/search/FindingService/v1?"
-            ."SECURITY-APPNAME=".$appname
-            ."&OPERATION-NAME=findItemsByKeywords&SERVICE-VERSION=1.0.0&RESPONSE-DATA-FORMAT=JSON&REST-PAYLOAD"
-            ."&affiliate.networkId=9"
-            ."&affiliate.trackingId=".$affiliateId
-            ."&keywords=".htmlspecialchars(urlencode($this->keyword))
-            ."&paginationInput.entriesPerPage=".$hits_set
-            ."&sortOrder=".htmlspecialchars(urlencode($sort_str[$this->sort]))
-            ."&GLOBAL-ID=EBAY-US&siteid=0";
-        $contents = @file_get_contents($url); // レスポンス取得
+        $ebayUrl = "https://api.ebay.com/buy/browse/v1/item_summary/search"
+        ."?q=".htmlspecialchars(urlencode($this->keyword))
+        ."&limit=$hits_set"
+        ."&sort=".$sort_str[$this->sort];
+        $contents = @file_get_contents($ebayUrl,false,$context); // レスポンス取得
         $json = json_decode($contents); // jsonオブジェクトに変換
+        //var_dump($ebayUrl);
         //var_dump($json);
         if ($json!==NULL) {
-            foreach($json->findItemsByKeywordsResponse[0]->searchResult[0]->item as $item){
+            foreach($json->itemSummaries as $item){
                 //var_dump($item->sellingStatus[0]->convertedCurrentPrice[0]->__value__);
                 $this->shop='ebay';
-                $this->url = $item->viewItemURL[0];
-                $this->image = $item->galleryURL[0];
-                $this->title = $item->title[0];
-                //$price = $item->sellingStatus[0]->currentPrice[0];
-                $this->price = ($item->sellingStatus[0]->convertedCurrentPrice[0]->__value__)*USDJPY; // USDのためJPYに直す
-                $this->item_id=md5($this->image); // 画像URLでitem_idを生成する
+                $this->url = $item->itemAffiliateWebUrl;
+                $this->image = $item->image->imageUrl;
+                $this->title = $item->title;
+                $this->price = ($item->price->value)*USDJPY; // USDのためJPYに直す
+                $this->item_id=md5($item->itemId); // ebayのitemIdからitem_idを生成する
                 //$this->items[] = ['item_id'=>$item_id,'image' => $mediumImageUrl, 'url' => $affiliateUrl, 'title' => $detail, 'price' => $price,'shop'=>'ebay'];
                 $this->add_item();
             }
