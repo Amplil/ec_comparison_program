@@ -1,6 +1,7 @@
 <?php
 define("USDJPY",105); // ドル円
 header("Content-Type: application/json; charset=UTF-8"); //ヘッダー情報の明記。必須。
+session_start();
 //var_dump($_POST["shop-disp"]);
 //var_dump(filter_input(INPUT_POST,"shop-disp",FILTER_DEFAULT,FILTER_REQUIRE_ARRAY));
 //var_dump($$_POST["order-item"]);
@@ -134,12 +135,59 @@ class ItemSearch{
         //$this->items=array_merge($this->items,array_slice($all_items,0,$hits_set)); // 0番目から$hits_set個取得して$this->itemsと結合
     }
     function ebay(){
+        $AccessToken= (isset($_SESSION['AccessToken'])) ? $_SESSION['AccessToken'] : $this->ebay_get_token(); // セッションにアクセストークンがない場合は取得する
+        $json = $this->ebay_search($AccessToken);
+        if($json==NULL){
+            $AccessToken=$this->ebay_get_token(); // アクセストークンが切れていたら再取得
+            $json = $this->ebay_search($AccessToken);
+        }
+
+        //var_dump($json);
+        if ($json!==NULL) {
+            foreach($json->itemSummaries as $item){
+                //var_dump($item->sellingStatus[0]->convertedCurrentPrice[0]->__value__);
+                $this->shop='ebay';
+                $this->url = $item->itemAffiliateWebUrl;
+                $this->image = $item->image->imageUrl;
+                $this->title = $item->title;
+                $this->price = ($item->price->value)*USDJPY; // USDのためJPYに直す
+                $this->item_id=md5($item->itemId); // ebayのitemIdからitem_idを生成する
+                //$this->items[] = ['item_id'=>$item_id,'image' => $mediumImageUrl, 'url' => $affiliateUrl, 'title' => $detail, 'price' => $price,'shop'=>'ebay'];
+                $this->add_item();
+            }
+        }
+    }
+    function ebay_get_token(){
+        $client_id=$this->shop_data["NewEbayApi"]["ClientId"];
+        $client_secret=$this->shop_data["NewEbayApi"]["ClientSecret"];
+        
+        $url = "https://api.ebay.com/identity/v1/oauth2/token";
+        $header=[
+          "Content-Type: application/x-www-form-urlencoded",
+          "Authorization: Basic ".base64_encode("$client_id:$client_secret")
+        ];
+        $data=[
+          "grant_type"=>"client_credentials",
+          "scope"=>"https://api.ebay.com/oauth/api_scope"
+        ];
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+        $result = json_decode(curl_exec($ch)); // json文字列をPHPオブジェクトに変換
+        $AccessToken=$result->access_token; // アクセストークン
+        curl_close($ch);
+      
+        $_SESSION['AccessToken']=$AccessToken;
+        return $AccessToken;
+    }
+    function ebay_search($AccessToken){
         $sort_str=['relevanceblender'=>'',
                 'review-rank'=>'distance',
                 'price-asc-rank'=>'price',
                 'price-desc-rank'=>'-price']; // 各ショップでのsortの名称
         $hits_set = 10; // 取得件数（商品数）
-        $AccessToken=$this->shop_data["NewEbayApiAccess"]["AccessToken"];
         $affiliateId=$this->shop_data["ebay"]["affiliateId"];
         $opts = array(
           'http'=>array(
@@ -155,22 +203,7 @@ class ItemSearch{
         ."&limit=$hits_set"
         ."&sort=".$sort_str[$this->sort];
         $contents = @file_get_contents($ebayUrl,false,$context); // レスポンス取得
-        $json = json_decode($contents); // jsonオブジェクトに変換
-        //var_dump($ebayUrl);
-        //var_dump($json);
-        if ($json!==NULL) {
-            foreach($json->itemSummaries as $item){
-                //var_dump($item->sellingStatus[0]->convertedCurrentPrice[0]->__value__);
-                $this->shop='ebay';
-                $this->url = $item->itemAffiliateWebUrl;
-                $this->image = $item->image->imageUrl;
-                $this->title = $item->title;
-                $this->price = ($item->price->value)*USDJPY; // USDのためJPYに直す
-                $this->item_id=md5($item->itemId); // ebayのitemIdからitem_idを生成する
-                //$this->items[] = ['item_id'=>$item_id,'image' => $mediumImageUrl, 'url' => $affiliateUrl, 'title' => $detail, 'price' => $price,'shop'=>'ebay'];
-                $this->add_item();
-            }
-        }
+        return json_decode($contents); // json文字列をPHPオブジェクトに変換
     }
     function add_item(){ // アイテムの追加
         if(array_search($this->item_id,array_column($this->items,'item_id'))===false){ // 同じ商品が出てきてしまうことがあるため対策
