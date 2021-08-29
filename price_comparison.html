@@ -26,7 +26,8 @@
 </head>
 
 <body>
-    <div id="container" class="container">
+    <div id="app">
+    <div class="container">
     <div class="row">
         <div class="col">
             <div class="header">いろいろな商品を比較！</div>
@@ -43,26 +44,53 @@
                     <span class="btn btn-light"><a href="price_comparison_cart.html"><i class="fas fa-shopping-cart"></i>カートを見る</a></span>
                 </div>
                 <div class="select">
-                    <div id="shop-select"></div>
-                    <select id="order-select" name="order-select"></select>
+                    <div id="shop-select">
+                        <label v-for="(value, name) in shop_item" @click="searchbtn_click">
+                            <input type="checkbox" v-bind:value="name" v-model="shop_disp">{{value}}
+                        </label>
+                    </div>
+                    <select id="order-select" name="order-select" v-model="order" v-on:change="searchbtn_click">
+                        <option v-for="(value, name) in order_str" v-bind:value="name">{{value}}</option>
+                    </select>
                 </div>
                 <!--<input type="hidden" name="kind" value="change_items">-->
             </form>
             <!--</form>-->
-            <!--<div id="loading"><img src="img/loading.gif"></div>-->
-            <div id="loading">
-                <div class="d-flex justify-content-center m-5">
-                    <div class="spinner-border" role="status">
-                        <span class="visually-hidden">Loading...</span>
+            <div v-if="errored">
+                <p>We're sorry, we're not able to retrieve this information at the moment, please try back later</p>
+            </div>
+            <div v-else>
+                <!--<div id="loading"><img src="img/loading.gif"></div>-->
+                <transition v-if="loading" id="loading" name="fade">
+                    <div class="d-flex justify-content-center m-5">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </transition>
+                <div v-else id="item-list" class="row">
+                    <div v-for="item in item_data" class="item col-xs-3">
+                        <a v-bind:href="item.url" target="_blank">
+                            <div class="img-block">
+                                <img v-bind:src="item.image">
+                            </div>
+                            <div class="pos-left">[{{shop_item[item.shop]}}] {{item.title}}</div>
+                            <div class="pos-left a-price">￥{{item.price | formatCurrency}}</div>
+                        </a>
+                        <div class="input-group-btn">
+                            <select>
+                                <option v-for="i in 10" v-bind:value="i" v-model="item.quantity">{{i}}</option>
+                            </select>
+                            <button @click="addToCart(item)" class="btn add_goods" v-bind:value="item.item_id">{{cart_text}}</button>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div id="item-list" class="row"></div>
         </div>
 
         <div class="col-3">
             <!-- カートの中身と合計 -->
-            <div id="cart_detail">
+            <cart_detail :goods="cartItems" v-show="cart_component">
                 <div id="goods_list"></div>
             </div>
             <div class="sidebar_fixed">
@@ -75,12 +103,12 @@
                     data-full-width-responsive="true"></ins>
             </div>
         </div>
-
     </div>
     </div>
+    </div>
 
-    <script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="lazysizes.min.js" async=""></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="price_comparison.js"></script>
 
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>

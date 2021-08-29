@@ -1,5 +1,33 @@
 let shop_item ={rakuten:'楽天',amazon:'Amazon',ebay:'ebay'}; // 表示の順番
 
+let app=new Vue({
+  el: '#app',
+  data() {
+      return {
+          loading: true,
+          errored: false,
+          error: null,
+          todos: null,
+      }
+  },
+  created() {
+      let vm = this
+      axios.get('add_cart.php', {
+          params: {
+              userId: '1'
+          }
+      })
+          .then(response => {
+              vm.todos = response.data
+          })
+          .catch(err => {
+              vm.errored = true,
+              vm.error = err
+          })
+          .finally(() => vm.loading = false)
+  }
+})
+
 $.post({
   url: 'add_cart.php',
   data:add_data={}, // 引数が何もないときphpのsessionのカート情報を呼び出すだけの機能になる
