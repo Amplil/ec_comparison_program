@@ -18,12 +18,14 @@ Vue.filter('formatCurrency', function (value) { // カンマ区切り
 // カートコンポーネント
 Vue.component('cart_detail', {
   template: `
+  <div>
     <div id="total">小計:{{total | formatCurrency}}円</div>
     <div id="goods_list">
       <div v-for="key in goods" class="item col-xs-3">
         <div class="img-block"><img src="key.image"></div>
         <i class="far fa-trash-alt"></i>
       </div>
+    </div>
     </div>
   `,
   props: ['goods'],

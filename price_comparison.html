@@ -78,8 +78,8 @@
                             <div class="pos-left a-price">￥{{item.price | formatCurrency}}</div>
                         </a>
                         <div class="input-group-btn">
-                            <select>
-                                <option v-for="i in 10" v-bind:value="i" v-model="item.quantity">{{i}}</option>
+                            <select v-model="item.quantity">
+                                <option v-for="i in 10" v-bind:value="i">{{i}}</option>
                             </select>
                             <button @click="addToCart(item)" class="btn add_goods" v-bind:value="item.item_id">{{cart_text}}</button>
                         </div>
