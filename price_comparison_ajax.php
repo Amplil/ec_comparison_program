@@ -39,9 +39,9 @@ class ItemSearch{
     function __construct(){
         $json = file_get_contents("/home/private_data/shop_data.json"); // jsonファイルの読み込み（非ハードコード化）
         $this->shop_data = json_decode($json,true); // 連想配列にする。
-        $this->shop_disp=filter_input(INPUT_POST,"shop-disp",FILTER_DEFAULT,FILTER_REQUIRE_ARRAY);
-        $this->keyword=filter_input(INPUT_POST,"keyword");
-        $this->sort=filter_input(INPUT_POST,"order");
+        $this->shop_disp=filter_input(INPUT_GET,"shop",FILTER_DEFAULT,FILTER_REQUIRE_ARRAY);
+        $this->keyword=filter_input(INPUT_GET,"keyword");
+        $this->sort=filter_input(INPUT_GET,"order");
         //public $sort_item=filter_input(INPUT_POST,"order-item",FILTER_DEFAULT,FILTER_REQUIRE_ARRAY);
         $this->get();
     }
