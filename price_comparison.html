@@ -35,7 +35,7 @@
             <!--<form method='post' action=''>-->
             <form action method="get">
                 <div class="input-group">
-                    <input type='text' id='searchtextbox' class="form-control" placeholder='キーワードで探す' name="search-key">
+                    <input v-bind:value="keyword" type='text' id='searchtextbox' class="form-control" placeholder='キーワードで探す' name="keyword">
                     <!--<button class="btn btn-primary">検索</button>-->
                     <span class="input-group-btn">
                         <!--<input class="btn btn-secondary" id="searchbtn" type="submit" value="Go">-->
@@ -46,10 +46,10 @@
                 <div class="select">
                     <div id="shop-select">
                         <label v-for="(value, name) in shop_item" @click="searchbtn_click">
-                            <input type="checkbox" v-bind:value="name" v-model="shop_disp">{{value}}
+                            <input type="checkbox" v-bind:value="name" v-model="shop_disp" name="shop[]">{{value}}
                         </label>
                     </div>
-                    <select id="order-select" name="order-select" v-model="order" v-on:change="searchbtn_click">
+                    <select id="order-select" name="order" v-model="order" v-on:change="searchbtn_click">
                         <option v-for="(value, name) in order_str" v-bind:value="name">{{value}}</option>
                     </select>
                 </div>
@@ -75,7 +75,7 @@
                                 <img v-bind:src="item.image">
                             </div>
                             <div class="pos-left">[{{shop_item[item.shop]}}] {{item.title}}</div>
-                            <div class="pos-left a-price">￥{{item.price | formatCurrency}}</div>
+                            <div class="pos-left a-price">{{item.price | formatCurrency}}</div>
                         </a>
                         <div class="input-group-btn">
                             <select v-model="item.quantity">

@@ -7,7 +7,7 @@ session_start();
 //var_dump($$_POST["order-item"]);
 //var_dump(filter_input(INPUT_POST,"order-item",FILTER_DEFAULT,FILTER_REQUIRE_ARRAY));
 /*
-$shop_disp=filter_input(INPUT_POST,"shop-disp",FILTER_DEFAULT,FILTER_REQUIRE_ARRAY);
+$shop_disp=filter_input(INPUT_POST,"shop",FILTER_DEFAULT,FILTER_REQUIRE_ARRAY);
 $keyword=filter_input(INPUT_POST,"keyword");
 $order=filter_input(INPUT_POST,"order");
 $order_item=filter_input(INPUT_POST,"order-item",FILTER_DEFAULT,FILTER_REQUIRE_ARRAY);
