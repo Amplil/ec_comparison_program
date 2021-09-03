@@ -150,7 +150,7 @@ class ItemSearch{
                 $this->url = $item->itemAffiliateWebUrl;
                 $this->image = $item->image->imageUrl;
                 $this->title = $item->title;
-                $this->price = ($item->price->value)*USDJPY; // USDのためJPYに直す
+                $this->price = round(($item->price->value)*USDJPY,2); // USDのためJPYに直す
                 $this->item_id=md5($item->itemId); // ebayのitemIdからitem_idを生成する
                 //$this->items[] = ['item_id'=>$item_id,'image' => $mediumImageUrl, 'url' => $affiliateUrl, 'title' => $detail, 'price' => $price,'shop'=>'ebay'];
                 $this->add_item();

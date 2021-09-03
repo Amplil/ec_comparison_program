@@ -41,7 +41,7 @@
                         <!--<input class="btn btn-secondary" id="searchbtn" type="submit" value="Go">-->
                         <button class="btn btn-secondary" id="searchbtn" type="submit"><i class="fas fa-search"></i></button>
                     </span>
-                    <span class="btn btn-light"><a href="price_comparison_cart.html"><i class="fas fa-shopping-cart"></i>カートを見る</a></span>
+                    <span class="btn btn-light"><a href="price_comparison_cart.html" target="_blank"><i class="fas fa-shopping-cart"></i>カートを見る</a></span>
                 </div>
                 <div class="select">
                     <div id="shop-select">
@@ -68,8 +68,8 @@
                         </div>
                     </div>
                 </transition>
-                <div v-else id="item-list" class="row">
-                    <div v-for="item in item_data" class="item col-xs-3">
+                <div v-show="item_list" id="item-list" class="row">
+                    <div v-for="item in items" class="item col-xs-3">
                         <a v-bind:href="item.url" target="_blank">
                             <div class="img-block">
                                 <img v-bind:src="item.image">
@@ -78,10 +78,12 @@
                             <div class="pos-left a-price">{{item.price | formatCurrency}}</div>
                         </a>
                         <div class="input-group-btn">
-                            <select v-model="item.quantity">
+                            <select v-model="item.quantity" v-on:change="cart_update(item)">
                                 <option v-for="i in 10" v-bind:value="i">{{i}}</option>
                             </select>
-                            <button @click="addToCart(item)" class="btn add_goods" v-bind:value="item.item_id">{{cart_text}}</button>
+                            <button @click="cart_update(item)" class="btn add_goods" v-bind:value="item.item_id">
+                                {{(typeof cartItems[item.item_id]==="undefined") ?  'カートに入れる' : '追加済み'}}
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -90,9 +92,7 @@
 
         <div class="col-3">
             <!-- カートの中身と合計 -->
-            <cart_detail :goods="cartItems" v-show="cart_component">
-                <div id="goods_list"></div>
-            </div>
+            <cart_detail :citems="cartItems" v-show="cartItems.length!==0"></cart_detail>
             <div class="sidebar_fixed">
                 <!-- サイドバー広告 -->
                 <ins class="adsbygoogle"
