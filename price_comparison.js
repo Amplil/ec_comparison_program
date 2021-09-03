@@ -20,8 +20,13 @@ const cm=Vue.component('cart_detail', {
     <div id="total">小計:{{total | formatCurrency}}円</div>
     <div id="goods_list">
       <div v-for="(item, index) in citems" class="item col-xs-3">
-        <div class="img-block"><img v-bind:src="item.image"></div>
-        <button @click="delete_cart([index])"><i class="far fa-trash-alt"></i></button>
+        <div class="img-block">
+          <img v-bind:src="item.image">
+          <div>
+            {{item.quantity}}個
+            <button @click="delete_cart([index])"><i class="far fa-trash-alt"></i></button>
+          </div>
+        </div>
       </div>
     </div>
   </div>

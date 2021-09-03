@@ -111,7 +111,7 @@
 }
 */
 .sidebar_fixed {
-  position: sticky;
+  /*position: sticky;*/
   top: 60px;
 }
 .sidebar_content {
