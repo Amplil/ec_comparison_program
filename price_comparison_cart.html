@@ -26,7 +26,7 @@
 </head>
 
 <body>
-    <div id="container" class="container">
+    <div id="app" class="container">
     <div class="row">
         <div class="col">
             <div class="header">ショッピングカート</div>
@@ -37,10 +37,18 @@
                 <div id="goods_list">
                     <table style="text-align:center" id="items">
                         <tr><th>商品</th><th>個数</th><th>数量</th><th>削除ボタン</th></tr>
+                        <tr v-for="(item, index) in cartItems">
+                            <td>{{item.title}}</td>
+                            <td>{{item.quantity}}個</td>
+                            <td><select>
+                                <option v-for="i in 10" v-bind:value="i">{{i}}</option>
+                            </select></td>
+                            <td><button type="button" @click="delete_cart([index])">削除</button></td>
+                        </tr>
                     </table>
                 </div>
             </div>
-            <button id="copy-button">Copy text</button>
+            <button id="copy-button" @click="copy_cart()">Copy text</button>
         </div>
 
         <div class="col-3">
@@ -52,15 +60,24 @@
                     data-ad-slot="9624100506"
                     data-ad-format="auto"
                     data-full-width-responsive="true"></ins>
+                <ins class="adsbygoogle"
+                    style="display:block"
+                    data-ad-client="ca-pub-2661815267943239"
+                    data-ad-slot="9624100506"
+                    data-ad-format="auto"
+                    data-full-width-responsive="true"></ins>
+                <a href="https://hb.afl.rakuten.co.jp/hsc/215065c8.7b0eff9b.21506482.ec2625de/?link_type=pict&ut=eyJwYWdlIjoic2hvcCIsInR5cGUiOiJwaWN0IiwiY29sIjoxLCJjYXQiOiI1NyIsImJhbiI6IjE0NjY3OTgiLCJhbXAiOmZhbHNlfQ%3D%3D" target="_blank" rel="nofollow sponsored noopener" style="word-wrap:break-word;"  >
+                    <img src="https://hbb.afl.rakuten.co.jp/hsb/215065c8.7b0eff9b.21506482.ec2625de/?me_id=1&me_adv_id=1466798&t=pict" border="0" style="margin:2px" alt="" title="">
+                </a>
             </div>
         </div>
 
     </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.auto.min.js"></script>
     <script src="price_comparison_cart.js"></script>
 
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>

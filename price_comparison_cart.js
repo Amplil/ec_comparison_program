@@ -1,33 +1,45 @@
-let shop_item ={rakuten:'楽天',amazon:'Amazon',ebay:'ebay'}; // 表示の順番
+//let shop_item ={rakuten:'楽天',amazon:'Amazon',ebay:'ebay'}; // 表示の順番
 
-let app=new Vue({
+const app=new Vue({
   el: '#app',
   data() {
-      return {
-          loading: true,
-          errored: false,
-          error: null,
-          todos: null,
+    return {
+      shop_item: {rakuten:'楽天',amazon:'Amazon',ebay:'ebay'},
+      cartItems:[],
+      loading: true,
+      errored: false,
       }
   },
-  created() {
-      let vm = this
-      axios.get('add_cart.php', {
-          params: {
-              userId: '1'
-          }
+  mounted() {
+    //let item={};
+    axios.post('add_cart.php',{})
+    .then(response => {
+      this.cartItems = response.data
+    })
+    .catch(error => {
+      console.log(error);
+    })
+  },
+  methods: {
+    delete_cart(del_list) { // カートから削除
+      /*
+      del_list.forEach(id=>{
+        delete this.citems[id];
+      });
+      */
+      axios.post('delete_cart.php',{
+        del_list
       })
-          .then(response => {
-              vm.todos = response.data
-          })
-          .catch(err => {
-              vm.errored = true,
-              vm.error = err
-          })
-          .finally(() => vm.loading = false)
+      .then(response => {
+        this.cartItems = response.data
+      })
+      .catch(error => {
+        console.log(error);
+      })
+    }
   }
 })
-
+/*
 $.post({
   url: 'add_cart.php',
   data:add_data={}, // 引数が何もないときphpのsessionのカート情報を呼び出すだけの機能になる
@@ -53,12 +65,11 @@ $.post({
       +'</tr>');
   }
   items_ele.insertAdjacentHTML('beforeend',disp_str);
-
 }).fail(function(XMLHttpRequest, textStatus, errorThrown){
     alert(errorThrown);
 })  
-
-
+*/
+/*
 let cart_open = function(){
   $("#goods_list").html('');
   
@@ -82,11 +93,11 @@ let cart_open = function(){
   $("#cart_detail").show();    //カートを開く
   //$("#data").val(data);        //POST[data]にカートの中身をセット
 }
-  
+
 function comma(num) { // 3桁ごとにカンマ
     return num.toString().replace( /([0-9]+?)(?=(?:[0-9]{3})+$)/g , '$1,' );
 } 
-
+*/
 setTimeout(function () {
   $('#copy-button')
   // tooltip設定
@@ -121,20 +132,4 @@ setTimeout(function () {
       // tooltip表示
       $(this).tooltip('show');
   });
-}, 545*1.33); // 545ms timing to load jQuery.js + network estimated delay 
-
-/*
-function copyToClipboard() {
-  var copyTarget = document.getElementById("items");
-  //document.write(copyTarget.value);
-  var range = document.createRange();
-  range.selectNode(copyTarget);
-  window.getSelection().addRange(range);
-
-  //copyTarget.select();
-
-  document.execCommand("Copy");
-
-  alert("コピーできました！");
-}
-*/
+}, 545*1.33); // 545ms timing to load jQuery.js + network estimated delay
