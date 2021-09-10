@@ -76,11 +76,15 @@ const app=new Vue({
       items: [],
       loading: true,
       errored: false,
-      item_list:false
+      item_list:false,
+      tr_on:v.get('tr_on')==='true' ? true : false,
+      tr_keyword:'',
+      tr_busy:false
     }
   },
   mounted() {
     this.cart_update();
+    // クエリフィルタ
     if(
       this.keyword!==null && 
       this.order!==null && 
@@ -88,43 +92,13 @@ const app=new Vue({
       this.order!=='' && 
       this.shop_disp.length!==0
     ){
-      axios.get('price_comparison_ajax.php', {
-        params: {
-          keyword:this.keyword,
-          shop:this.shop_disp,
-          order:this.order
-        }
-      })
-      .then(response => {
-        this.items = response.data
-        this.items.forEach(item => {
-          item.quantity=1; // quantityプロパティを追加
-          /*
-          item.existence = false; // existence(カートにあるかどうか)プロパティを追加
-
-          for(let cart_id in this.cartItems){
-            if (cart_id === item.item_id) {
-              item.existence = true;
-            }
-          }
-          */
-          /*
-          this.cartItems.forEach(citem => {
-            if (citem.item_id === item.item_id) {
-              item.existence = true;
-            }
-          });
-          */
+      if(this.tr_on==true){
+        this.trans(this.keyword,'ja','en',out=>{
+          this.tr_keyword=out;
+          this.serach_item();
         });
-      })
-      .catch(error => {
-        console.log(error);
-        this.errored = true;
-      })
-      .finally(() => {
-        this.loading = false;
-        this.item_list=true;
-      })
+      }
+      this.serach_item();
     }
     else{
       this.loading = false;
@@ -181,5 +155,88 @@ const app=new Vue({
     searchbtn_click(){ // サーチボタンをクリックしてサブミット
       document.getElementById('searchbtn').click();
     },
+    trans(input,source,target,tr_out_func){ // GASによる翻訳
+      this.tr_busy=true;
+      axios.get('https://script.google.com/macros/s/AKfycbwslso6KP1b4rBQfDcIrVBh7iJmGzdrvqBKq6s7nfBUTZPeCSlPNg-6-rLjSnnvmhxWYA/exec', {
+        params: {
+          text:input,
+          source:source,
+          target:target
+        }
+      })
+      .then(response => {
+        this.tr_busy=false;
+        tr_out_func(response.data);
+      })
+    },
+    trans_item(on){
+      this.items.forEach(item => {
+        if(item.shop==='ebay'){ // 海外ショップのアイテムの翻訳
+          if(on){
+            if(typeof item.title_ja==="undefined"){  // 変数が定義されているかどうか
+              this.trans(item.title,'en','ja',out=>{
+                item.title_ja=out;
+                item.title_en=item.title;
+                item.title=out;
+              });
+            }
+            else{
+              item.title=item.title_ja;
+            }
+          }
+          else{
+            if(typeof item.title_en!=="undefined"){  // 変数が定義されているかどうか
+              item.title=item.title_en;
+            }
+          }
+        }
+      });
+    },
+    serach_item(){
+      axios.get('price_comparison_ajax.php', {
+        params: {
+          keyword:this.keyword,
+          shop:this.shop_disp,
+          order:this.order,
+          tr_keyword:this.tr_keyword
+        }
+      })
+      .then(response => {
+        this.items = response.data
+        this.items.forEach(item => {
+          item.quantity=1; // quantityプロパティを追加
+          /*
+          item.existence = false; // existence(カートにあるかどうか)プロパティを追加
+
+          for(let cart_id in this.cartItems){
+            if (cart_id === item.item_id) {
+              item.existence = true;
+            }
+          }
+          */
+          /*
+          this.cartItems.forEach(citem => {
+            if (citem.item_id === item.item_id) {
+              item.existence = true;
+            }
+          });
+          */
+        });
+        this.trans_item(this.tr_on);
+      })
+      .catch(error => {
+        console.log(error);
+        this.errored = true;
+      })
+      .finally(() => {
+        this.loading = false;
+        this.item_list=true;
+      })
+    }
+  },
+  watch:{
+    tr_on(value){
+      this.trans_item(value);
+    }
   }
 });
