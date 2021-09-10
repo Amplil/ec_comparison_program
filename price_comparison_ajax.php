@@ -42,6 +42,8 @@ class ItemSearch{
         $this->shop_disp=filter_input(INPUT_GET,"shop",FILTER_DEFAULT,FILTER_REQUIRE_ARRAY);
         $this->keyword=filter_input(INPUT_GET,"keyword");
         $this->sort=filter_input(INPUT_GET,"order");
+        $this->tr_keyword=filter_input(INPUT_GET,"tr_keyword");
+        $this->tr_keyword=$this->tr_keyword===null ? "" : $this->tr_keyword; // nullなら""にする。
         //public $sort_item=filter_input(INPUT_POST,"order-item",FILTER_DEFAULT,FILTER_REQUIRE_ARRAY);
         $this->get();
     }
@@ -198,8 +200,9 @@ class ItemSearch{
         );
         $context = stream_context_create($opts);
         // ebayリクエストURLからebay市場の商品情報を取得
+        $sarch_word=$this->tr_keyword==='' ? $this->keyword : $this->tr_keyword;
         $ebayUrl = "https://api.ebay.com/buy/browse/v1/item_summary/search"
-        ."?q=".htmlspecialchars(urlencode($this->keyword))
+        ."?q=".htmlspecialchars(urlencode($sarch_word))
         ."&limit=$hits_set"
         ."&sort=".$sort_str[$this->sort];
         $contents = @file_get_contents($ebayUrl,false,$context); // レスポンス取得

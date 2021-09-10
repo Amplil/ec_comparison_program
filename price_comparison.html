@@ -52,6 +52,10 @@
                     <select id="order-select" name="order" v-model="order" v-on:change="searchbtn_click">
                         <option v-for="(value, name) in order_str" v-bind:value="name">{{value}}</option>
                     </select>
+                    <label>
+                        <input type="checkbox" v-bind:value="true" v-model="tr_on" name="tr_on">翻訳機能
+                        <span v-show="tr_on">翻訳した検索ワード：{{tr_keyword}} {{tr_busy ? "翻訳中" : "翻訳済み"}}</span>
+                    </label>
                 </div>
                 <!--<input type="hidden" name="kind" value="change_items">-->
             </form>
