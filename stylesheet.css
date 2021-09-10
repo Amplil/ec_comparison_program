@@ -127,3 +127,6 @@
   border-radius:5px;
   background-color: #ffd814;
 }
+[v-cloak] {
+  display: none;
+}

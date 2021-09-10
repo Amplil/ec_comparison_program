@@ -26,7 +26,7 @@
 </head>
 
 <body>
-    <div id="app">
+    <div id="app" v-cloak>
     <div class="container">
     <div class="row">
         <div class="col">
@@ -60,7 +60,6 @@
                 <p>We're sorry, we're not able to retrieve this information at the moment, please try back later</p>
             </div>
             <div v-else>
-                <!--<div id="loading"><img src="img/loading.gif"></div>-->
                 <transition v-if="loading" id="loading" name="fade">
                     <div class="d-flex justify-content-center m-5">
                         <div class="spinner-border" role="status">
@@ -68,7 +67,8 @@
                         </div>
                     </div>
                 </transition>
-                <div v-show="item_list" id="item-list" class="row">
+                <!--<div v-show="item_list" id="item-list" class="row">-->
+                <div id="item-list" class="row">
                     <div v-for="item in items" class="item col-xs-3">
                         <a v-bind:href="item.url" target="_blank">
                             <div class="img-block">
