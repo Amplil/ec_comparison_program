@@ -15,8 +15,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <TITLE>オープンマーケット！ショッピングカート</TITLE>
+    <!--
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.1/css/all.css">
+    -->
+    <link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap/dist/css/bootstrap.min.css"/>
+    <link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap-vue@2.21.2/dist/bootstrap-vue.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css"/>
+
+
     <link rel="stylesheet" href="stylesheet.css">
     <!--
     <script>window._epn = {campaign: 5338815131};</script>
@@ -36,19 +43,31 @@
             <div id="cart_detail" v-cloak>
                 <div id="goods_list">
                     <table style="text-align:center" id="items">
-                        <tr><th>商品</th><th>個数</th><th>数量</th><th>削除ボタン</th></tr>
+                        <tr><th>商品</th><th>個数</th><th>削除ボタン</th></tr>
                         <tr v-for="(item, index) in cartItems">
                             <td>{{item.title}}</td>
-                            <td>{{item.quantity}}個</td>
-                            <td><select>
-                                <option v-for="i in 10" v-bind:value="i">{{i}}</option>
-                            </select></td>
+                            <td>
+                                <select v-model="item.quantity" v-on:change="cart_modify(index)">
+                                    <option v-for="i in 10" v-bind:value="i">{{i}}</option>
+                                </select>
+                            </td>
                             <td><button type="button" @click="delete_cart([index])">削除</button></td>
                         </tr>
                     </table>
                 </div>
             </div>
-            <button id="copy-button" @click="copy_cart()">Copy text</button>
+            <b-button id="copy-button" @click="copy()">Copy text</button>
+            <b-popover
+                :disabled.sync="pop_disabled"
+                :no-fade.sync="pop_nofade"
+                :show.sync="pop_show"
+                target="copy-button"
+                ref="popover"
+                placement="bottom"
+                triggers="hover"
+            >
+                <i class="bi bi-check2"></i> Copied!
+            </b-popover>
         </div>
 
         <div class="col-3">
@@ -75,9 +94,16 @@
     </div>
     </div>
 
-    <script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+    <!--<script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>-->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+            crossorigin="anonymous"></script>
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+    <script src="//unpkg.com/bootstrap-vue@2.21.2/dist/bootstrap-vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-clipboard2@0.3.1/dist/vue-clipboard.min.js"></script>
     <script src="price_comparison_cart.js"></script>
 
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -85,8 +111,4 @@
          (adsbygoogle = window.adsbygoogle || []).push({});
     </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
-            crossorigin="anonymous"></script>
-    </body>
 </html>
