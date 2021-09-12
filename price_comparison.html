@@ -35,7 +35,7 @@
             <!--<form method='post' action=''>-->
             <form action method="get">
                 <div class="input-group">
-                    <input v-bind:value="keyword" type='text' id='searchtextbox' class="form-control" placeholder='キーワードで探す' name="keyword">
+                    <input v-bind:value="keyword" v-model="keyword" type='text' id='searchtextbox' class="form-control" placeholder='キーワードで探す' name="keyword">
                     <!--<button class="btn btn-primary">検索</button>-->
                     <span class="input-group-btn">
                         <!--<input class="btn btn-secondary" id="searchbtn" type="submit" value="Go">-->
