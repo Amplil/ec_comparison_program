@@ -48,6 +48,7 @@ const cm=Vue.component('cart_detail', {
         delete this.citems[id];
       });
       */
+     /*
       axios.post('delete_cart.php',{
         del_list
       })
@@ -57,6 +58,7 @@ const cm=Vue.component('cart_detail', {
       .catch(error => {
         console.log(error);
       })
+      */
     }
   }
 });
@@ -129,16 +131,8 @@ const app=new Vue({
         }
         */
       }
+      /*
       axios.post('add_cart.php',{
-        /*
-        item_id:itemToAdd.item_id,
-        image:itemToAdd.image,
-        url:itemToAdd.url,
-        title:itemToAdd.title,
-        price:itemToAdd.price,
-        shop:itemToAdd.shop,
-        quantity:itemToAdd.quantity
-        */
         item
       })
       .then(response => {
@@ -151,6 +145,7 @@ const app=new Vue({
         //this.cart_text='追加済み'
         //this.cart_component=(this.cartItems.length!==0 ? true : false); //カートにアイテムが入っている場合は表示
       })
+      */
     },
     searchbtn_click(){ // サーチボタンをクリックしてサブミット
       document.getElementById('searchbtn').click();
@@ -193,8 +188,10 @@ const app=new Vue({
       });
     },
     serach_item(){
-      axios.get('price_comparison_ajax.php', {
-        params: {
+      //axios.get('price_comparison_ajax.php', {
+      axios.get('https://nokswuwbmb.execute-api.ap-northeast-1.amazonaws.com/', {
+      //axios.get('http://localhost:3000/', {
+          params: {
           keyword:this.keyword,
           shop:this.shop_disp,
           order:this.order,
