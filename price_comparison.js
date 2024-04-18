@@ -189,7 +189,8 @@ const app=new Vue({
     },
     serach_item(){
       //axios.get('price_comparison_ajax.php', {
-      axios.get('https://nokswuwbmb.execute-api.ap-northeast-1.amazonaws.com/', {
+      //axios.get('https://nokswuwbmb.execute-api.ap-northeast-1.amazonaws.com/', {
+      axios.get('https://jcxcmpwqxg.execute-api.ap-northeast-1.amazonaws.com/webhook/', {
       //axios.get('http://localhost:3000/', {
           params: {
           keyword:this.keyword,
